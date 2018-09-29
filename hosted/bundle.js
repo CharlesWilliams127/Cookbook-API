@@ -30,11 +30,11 @@ var counterStruct = {
             content.appendChild(p);
         }
 
-        //if users in response, add to screen
-        if (obj.users) {
+        //if recipes in response, add to screen
+        if (obj.recipes) {
             var userList = document.createElement('p');
-            var users = JSON.stringify(obj.users);
-            userList.textContent = users;
+            var recipes = JSON.stringify(obj.recipes);
+            userList.textContent = recipes;
             content.appendChild(userList);
         }
     } catch (SyntaxError) {}
@@ -42,7 +42,7 @@ var counterStruct = {
 
 //function to handle our response
 var handleResponse = function handleResponse(xhr) {
-    var content = document.querySelector('#content');
+    var content = document.querySelector('#dynamicContent');
 
     //check the status code
     switch (xhr.status) {
@@ -81,14 +81,20 @@ var sendPost = function sendPost(e, addRecipe) {
     var recipeMethod = addRecipe.getAttribute('method');
 
     var titleField = addRecipe.querySelector('#titleField');
-    //let ingredients = [];
+    var descField = addRecipe.querySelector('#descriptionField');
+    var priceField = addRecipe.querySelector('#priceField');
+    var caloriesField = addRecipe.querySelector('#caloriesField');
 
+    // set up base form data
     var formData = {
         title: titleField.value,
-        ingredients: []
-    };
+        description: descField.value,
+        price: priceField.value,
+        calories: caloriesField.value,
+        ingredients: ""
 
-    for (var i = 0; i < ingredientCounter; i++) {
+        // populate ingredients
+    };for (var i = 0; i < ingredientCounter; i++) {
         formData.ingredients.push(addRecipe.querySelector('#Ingredient' + i).value);
     }
 
@@ -106,7 +112,8 @@ var sendPost = function sendPost(e, addRecipe) {
         return handleResponse(xhr);
     };
 
-    //const formData = `title=${titleField.value}&age=${ageField.value}`;
+    var section = document.querySelector('#addRecipe');
+    section.style.display = "none";
 
     xhr.send(JSON.stringify(formData));
 
@@ -116,33 +123,23 @@ var sendPost = function sendPost(e, addRecipe) {
     return false;
 };
 
-var requestUpdate = function requestUpdate(e, userForm) {
-    //grab url field 
-    var url = userForm.querySelector('#urlField').value;
-    //grab method selected
-    var method = userForm.querySelector('#methodSelect').value;
+var requestUpdate = function requestUpdate() {
 
     var xhr = new XMLHttpRequest();
 
-    xhr.open(method, url);
+    xhr.open('get', '/getRecipes');
 
     xhr.setRequestHeader('Accept', 'application/json');
     //if get request or head request
-    if (method == 'get') {
-        xhr.onload = function () {
-            return handleResponse(xhr, true);
-        };
-    } else {
-        xhr.onload = function () {
-            return handleResponse(xhr, false);
-        };
-    }
+    xhr.onload = function () {
+        return handleResponse(xhr, true);
+    };
 
     //send ajax request
     xhr.send();
 
     //cancel browser's default action
-    e.preventDefault();
+    //e.preventDefault();
     //return false to prevent page redirection from a form
     return false;
 };
@@ -155,10 +152,19 @@ var addItem = function addItem(e, list, elemName) {
     list.appendChild(item);
 };
 
+// displays the recipe creation content
+var displayAddRecipe = function displayAddRecipe(e) {
+    var section = document.querySelector('#addRecipe');
+    section.style.display = "block";
+};
+
 var init = function init() {
+    //make recipe button
+    var displayRecipeButton = document.querySelector("#displayAddRecipe");
+
     //grab forms
     var recipeForm = document.querySelector('#recipeForm');
-    //const getForm = document.querySelector('#getRecipes');
+    var getForm = document.querySelector('#getRecipes');
 
     var ingredientList = document.querySelector('#ingredientList');
     var ingredientButton = document.querySelector('#ingredientButton');
@@ -173,7 +179,9 @@ var init = function init() {
     var addRecipe = function addRecipe(e) {
         return sendPost(e, recipeForm);
     };
-    //const getRecipes = (e) => requestUpdate(e, getForm);
+    var getRecipes = function getRecipes(e) {
+        return requestUpdate(e, getForm);
+    };
     var addIngredient = function addIngredient(e) {
         return addItem(e, ingredientList, 'Ingredient');
     };
@@ -183,13 +191,20 @@ var init = function init() {
     var addAppliance = function addAppliance(e) {
         return addItem(e, applianceList, 'Appliance');
     };
+    var displayAddRecipeContent = function displayAddRecipeContent(e) {
+        return displayAddRecipe(e);
+    };
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
-    //getForm.addEventListener('submit', getRecipes);
+    getForm.addEventListener('submit', getRecipes);
     ingredientButton.addEventListener('click', addIngredient);
     directionButton.addEventListener('click', addDirection);
     applianceButton.addEventListener('click', addAppliance);
+    displayRecipeButton.addEventListener('click', displayAddRecipeContent);
+
+    // automatically display known recipes
+    requestUpdate();
 };
 
 window.onload = init;

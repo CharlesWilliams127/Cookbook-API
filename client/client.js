@@ -25,11 +25,11 @@ const parseJSON = (xhr, content) => {
         content.appendChild(p);
         }
         
-        //if users in response, add to screen
-        if(obj.users) {
+        //if recipes in response, add to screen
+        if(obj.recipes) {
         const userList = document.createElement('p');
-        const users = JSON.stringify(obj.users);
-        userList.textContent = users;
+        const recipes = JSON.stringify(obj.recipes);
+        userList.textContent = recipes;
         content.appendChild(userList);
         }
     }
@@ -38,7 +38,7 @@ const parseJSON = (xhr, content) => {
 
 //function to handle our response
 const handleResponse = (xhr) => {
-    const content = document.querySelector('#content');
+    const content = document.querySelector('#dynamicContent');
 
     //check the status code
     switch(xhr.status) {
@@ -71,13 +71,20 @@ const sendPost = (e, addRecipe) => {
     const recipeMethod = addRecipe.getAttribute('method');
 
     const titleField = addRecipe.querySelector('#titleField');
-    //let ingredients = [];
+    const descField = addRecipe.querySelector('#descriptionField');
+    const priceField = addRecipe.querySelector('#priceField');
+    const caloriesField = addRecipe.querySelector('#caloriesField');
 
+    // set up base form data
     const formData = {
         title: titleField.value,
-        ingredients: []
+        description: descField.value,
+        price: priceField.value,
+        calories: caloriesField.value,
+        ingredients: ""
     }
 
+    // populate ingredients
     for (let i = 0; i < ingredientCounter; i++) {
         formData.ingredients.push(addRecipe.querySelector(`#Ingredient${i}`).value);
     }
@@ -94,7 +101,8 @@ const sendPost = (e, addRecipe) => {
     //set our function to handle the response
     xhr.onload = () => handleResponse(xhr);
 
-    //const formData = `title=${titleField.value}&age=${ageField.value}`;
+    const section = document.querySelector('#addRecipe');
+    section.style.display = "none";
 
     xhr.send(JSON.stringify(formData));
 
@@ -104,29 +112,21 @@ const sendPost = (e, addRecipe) => {
     return false;
 };
 
-const requestUpdate = (e, userForm) => {
-    //grab url field 
-    const url = userForm.querySelector('#urlField').value;
-    //grab method selected
-    const method = userForm.querySelector('#methodSelect').value;
+const requestUpdate = () => {
 
     const xhr = new XMLHttpRequest();
 
-    xhr.open(method, url);
+    xhr.open('get', '/getRecipes');
 
     xhr.setRequestHeader('Accept', 'application/json');
     //if get request or head request
-    if(method == 'get') {
-        xhr.onload = () => handleResponse(xhr, true);
-    } else {
-        xhr.onload = () => handleResponse(xhr, false);
-    }
+    xhr.onload = () => handleResponse(xhr, true);
 
     //send ajax request
     xhr.send();
 
     //cancel browser's default action
-    e.preventDefault();
+    //e.preventDefault();
     //return false to prevent page redirection from a form
     return false;
 };
@@ -139,10 +139,19 @@ const addItem = (e, list, elemName) => {
     list.appendChild(item);
 };
 
+// displays the recipe creation content
+const displayAddRecipe = (e) => {
+    const section = document.querySelector('#addRecipe');
+    section.style.display = "block";
+}
+
 const init = () => {
+    //make recipe button
+    const displayRecipeButton = document.querySelector("#displayAddRecipe");
+
     //grab forms
     const recipeForm = document.querySelector('#recipeForm');
-    //const getForm = document.querySelector('#getRecipes');
+    const getForm = document.querySelector('#getRecipes');
 
     const ingredientList = document.querySelector('#ingredientList');
     const ingredientButton = document.querySelector('#ingredientButton');
@@ -155,17 +164,22 @@ const init = () => {
 
     //create handlers
     const addRecipe = (e) => sendPost(e, recipeForm);
-    //const getRecipes = (e) => requestUpdate(e, getForm);
+    const getRecipes = (e) => requestUpdate(e, getForm);
     const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient');
     const addDirection = (e) => addItem(e, directionList, 'Direction');
     const addAppliance = (e) => addItem(e, applianceList, 'Appliance');
+    const displayAddRecipeContent = (e) => displayAddRecipe(e);
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
-    //getForm.addEventListener('submit', getRecipes);
+    getForm.addEventListener('submit', getRecipes);
     ingredientButton.addEventListener('click', addIngredient);
     directionButton.addEventListener('click', addDirection);
     applianceButton.addEventListener('click', addAppliance);
+    displayRecipeButton.addEventListener('click', displayAddRecipeContent);
+
+    // automatically display known recipes
+    requestUpdate();
     
 };
 

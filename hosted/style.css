@@ -6,9 +6,66 @@ html, body {
   font-family: sans-serif;
 }
 
+hr {
+	width: 90%;
+}
+
+#addRecipe {
+  display: none;
+}
+
 #top {
-  text-align: center;
-  margin: 0 auto;
+  width: 100%;
+  position: fixed;
+  background-color: #fff;
+  padding: 10px;
+  padding-bottom: 5px;
+  /*box-shadow: 3px 3px 20px #000;*/
+  z-index: 11;
+  top:0;
+	left: 0;
+  margin: 0px;
+  border-bottom: 2px solid #E8E8E8;
+}
+
+#content {
+  margin-top: 50px;
+}
+
+.top-element, .top-element-right {
+  display: inline;
+  color: #3a3c3d;
+  margin: 5px;
+}
+
+.top-element input{
+  /*color: #3a3c3d;*/
+  background-color: #E8E8E8;
+  border-radius: 10px;
+  font-size: 14pt;
+  padding: 5px;
+  width: 50%;
+}
+
+.top-element-right {
+  text-align: right;
+}
+
+#top img {
+  margin: auto;
+  vertical-align: middle;
+  width: 5%;
+  /*filter: invert(100%);*/
+  transition-property: filter;
+  transition-duration: 0.25s;
+}
+
+#top img:hover {
+  filter: invert(50%);
+}
+
+.displayButton:hover {
+  cursor: pointer;
 }
 
 #top h1 {

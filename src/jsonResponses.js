@@ -1,5 +1,5 @@
 // purely in mem
-const users = {};
+const recipes = {};
 
 // function to respond with a json object
 // takes request, response, status code and object to send
@@ -15,37 +15,42 @@ const respondJSONMeta = (request, response, status) => {
 };
 
 // return user object as JSON
-const getUsers = (request, response) => {
+const getRecipes = (request, response) => {
   const responseJSON = {
-    users,
+    recipes,
   };
 
   respondJSON(request, response, 200, responseJSON);
 };
 
-const getUsersMeta = (request, response) => respondJSONMeta(request, response, 200);
+const getRecipesMeta = (request, response) => respondJSONMeta(request, response, 200);
 
 // function to add a user from a POST body
-const addUser = (request, response, body) => {
+const addRecipe = (request, response, body) => {
   // default json message
   const responseJSON = {
-    message: 'Name and age are both required.',
+    message: 'There are missing parameters.',
   };
 
-  if (!body.name || !body.age) {
+  console.dir(body);
+
+  if (!body.title) {
     responseJSON.id = 'missingParams';
     return respondJSON(request, response, 400, responseJSON);
   }
 
   let responseCode = 201;
 
-  if (users[body.name]) {
+  if (recipes[body.title]) {
     responseCode = 204;
   } else {
-    users[body.name] = {};
+    recipes[body.title] = {};
   }
-  users[body.name].name = body.name;
-  users[body.name].age = body.age;
+  recipes[body.title].title = body.title;
+  recipes[body.title].description = body.description;
+  recipes[body.title].price = body.price;
+  recipes[body.title].calories = body.calories;
+  recipes[body.title].ingredients = body.Ingredient;
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -65,8 +70,8 @@ const notFound = (request, response) => {
 
 // public exports
 module.exports = {
-  getUsers,
-  addUser,
+  getRecipes,
+  addRecipe,
   notFound,
-  getUsersMeta,
+  getRecipesMeta,
 };

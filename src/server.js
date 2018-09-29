@@ -10,16 +10,17 @@ const urlStruct = {
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
   '/bundle.js': htmlHandler.getBundle,
-  '/getUsers': jsonHandler.getUsers,
+  '/Add-512.png': htmlHandler.getAddImage,
+  '/getRecipes': jsonHandler.getRecipes,
   '/notReal': jsonHandler.notFound,
-  getUsersMeta: jsonHandler.getUsersMeta,
+  getrecipesMeta: jsonHandler.getRecipesMeta,
   index: htmlHandler.getIndex,
   notFound: jsonHandler.notFound,
 };
 
 const handlePost = (request, response, parsedUrl) => {
   // if post is to /addUser (our only POST url)
-  if (parsedUrl.pathname === '/addUser') {
+  if (parsedUrl.pathname === '/addRecipe') {
     const res = response;
 
     const body = [];
@@ -41,16 +42,14 @@ const handlePost = (request, response, parsedUrl) => {
       const bodyParams = query.parse(bodyString);
 
       // pass to our addUser function
-      jsonHandler.addUser(request, res, bodyParams);
+      jsonHandler.addRecipe(request, res, bodyParams);
     });
   }
 };
 
 const handleHeadGet = (request, response, parsedUrl) => {
   // route to correct method based on url
-  if (parsedUrl.pathname === '/getUsers' && request.method === 'HEAD') {
-    jsonHandler.getUsersMeta(request, response);
-  } else if (urlStruct[parsedUrl.pathname]) {
+  if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response);
   } else {
     urlStruct.notFound(request, response);
