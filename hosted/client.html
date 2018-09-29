@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Our simple HTTP server</title>
-  <link rel="stylesheet" type="text/css" href="./style.css">
+  <link rel="stylesheet" type="text/css" href="/style.css">
   <script src="bundle.js"></script>
 </head>
 <body>
@@ -17,12 +17,25 @@
     <form id="recipeForm" action="/addRecipe" method="post">
       <label for="title">Title: </label>
       <input id="titleField" type="text" name="title" />
+      <label for="description">Description: </label>
+      <input id="descriptionField" type="text" name="description" />
       <label for="price">Price: </label>
       <input id="priceField" type="number" name="price" min="0" step="1"/>
+      <label for="calories">Calories: </label>
+      <input id="caloriesField" type="number" name="calories" min="0" step="1"/>
       <input type="submit" value="Add Recipe" />
+      <ul id="ingredientList">
+        <li><input id="ingredientButton" type="button" value="Add Ingredient"/></li>
+      </ul>
+      <ol id="directionList">
+        <li><input id="directionButton" type="button" value="Add Direction"/></li>
+      </ol>
+      <ul id="applianceList">
+        <li><input id="applianceButton" type="button" value="Add Appliance"/></li>
+      </ul>
   </section>
 
-  </form>
+  <form id="getRecipes">
   <!--Used to display, needs to be removed, should happen automatically-->
     <input type="submit" value="Get Recipes" />
   </form>

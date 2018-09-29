@@ -1,3 +1,16 @@
+let ingredientCounter = 0;
+let directionCounter = 0;
+
+// helper functions to increment variables for keeping track of items in lists
+const getIngredientCount = () => { return ingredientCounter++ };
+const getDirectionCount = () => { return directionCounter++; };
+
+// a simple struct that will determine which counter to update
+const counterStruct = {
+    'Ingredient': getIngredientCount,
+    'Direction': getDirectionCount,
+}
+
 //function to parse our response
 const parseJSON = (xhr, content) => {
     //parse response (obj will be empty in a 204 updated)
@@ -53,15 +66,26 @@ const handleResponse = (xhr) => {
 };
 
 //function to send our post request
-const sendPost = (e, nameForm) => {
-    const nameAction = nameForm.getAttribute('action');
-    const nameMethod = nameForm.getAttribute('method');
+const sendPost = (e, addRecipe) => {
+    const recipeAction = addRecipe.getAttribute('action');
+    const recipeMethod = addRecipe.getAttribute('method');
 
-    const nameField = nameForm.querySelector('#nameField');
-    const ageField = nameForm.querySelector('#ageField');
+    const titleField = addRecipe.querySelector('#titleField');
+    //let ingredients = [];
+
+    const formData = {
+        title: titleField.value,
+        ingredients: []
+    }
+
+    for (let i = 0; i < ingredientCounter; i++) {
+        formData.ingredients.push(addRecipe.querySelector(`#Ingredient${i}`).value);
+    }
+
+    console.dir(formData);
 
     const xhr = new XMLHttpRequest();
-    xhr.open(nameMethod, nameAction);
+    xhr.open(recipeMethod, recipeAction);
 
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     //set our requested response type in hopes of a JSON response
@@ -70,9 +94,9 @@ const sendPost = (e, nameForm) => {
     //set our function to handle the response
     xhr.onload = () => handleResponse(xhr);
 
-    const formData = `name=${nameField.value}&age=${ageField.value}`;
+    //const formData = `title=${titleField.value}&age=${ageField.value}`;
 
-    xhr.send(formData);
+    xhr.send(JSON.stringify(formData));
 
     //prevent the browser's default action (to send the form on its own)
     e.preventDefault();
@@ -107,18 +131,42 @@ const requestUpdate = (e, userForm) => {
     return false;
 };
 
+// creates a new field for the user to add to
+const addItem = (e, list, elemName) => {
+    const count = counterStruct[elemName]();
+    const item = document.createElement('li');
+    item.innerHTML = `<input id="${elemName}${count}" type="text" name="${elemName}" />`;
+    list.appendChild(item);
+};
+
 const init = () => {
-    //grab form
-    const nameForm = document.querySelector('#nameForm');
-    const userForm = document.querySelector('#userForm');
+    //grab forms
+    const recipeForm = document.querySelector('#recipeForm');
+    //const getForm = document.querySelector('#getRecipes');
 
-    //create handler
-    const addUser = (e) => sendPost(e, nameForm);
-    const getUsers = (e) => requestUpdate(e, userForm);
+    const ingredientList = document.querySelector('#ingredientList');
+    const ingredientButton = document.querySelector('#ingredientButton');
 
-    //attach submit event (for clicking submit or hitting enter)
-    nameForm.addEventListener('submit', addUser);
-    userForm.addEventListener('submit', getUsers);
+    const directionList = document.querySelector('#directionList');
+    const directionButton = document.querySelector('#directionButton');
+
+    const applianceList = document.querySelector('#applianceList');
+    const applianceButton = document.querySelector('#applianceButton');
+
+    //create handlers
+    const addRecipe = (e) => sendPost(e, recipeForm);
+    //const getRecipes = (e) => requestUpdate(e, getForm);
+    const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient');
+    const addDirection = (e) => addItem(e, directionList, 'Direction');
+    const addAppliance = (e) => addItem(e, applianceList, 'Appliance');
+
+    //attach submit events (for clicking submit or hitting enter)
+    recipeForm.addEventListener('submit', addRecipe);
+    //getForm.addEventListener('submit', getRecipes);
+    ingredientButton.addEventListener('click', addIngredient);
+    directionButton.addEventListener('click', addDirection);
+    applianceButton.addEventListener('click', addAppliance);
+    
 };
 
 window.onload = init;
