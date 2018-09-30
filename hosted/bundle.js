@@ -32,7 +32,7 @@ var counterStruct = {
         console.dir(obj);
         //if recipes in response, add to screen
         if (obj.recipes) {
-            for (var i = 0; i < obj.recipes.length; i++) {
+            var _loop = function _loop(i) {
                 // create a new grid item for masonry
                 var gridItem = document.createElement('div');
                 gridItem.className = "grid-item"; // TODO: make grid "smart" i.e, find out which size would be best
@@ -47,11 +47,22 @@ var counterStruct = {
                 gridItem.appendChild(description);
 
                 content.appendChild(gridItem);
+
+                // add to masonry layout
+                //masonry.appended(gridItem);
+
+                //add an event listener to expand it
+                gridItem.addEventListener('click', function (e) {
+                    gridItem.classList.toggle('grid-item--selected');
+                    // trigger layout
+                    masonry.layout();
+                });
+            };
+
+            for (var i = 0; i < obj.recipes.length; i++) {
+                _loop(i);
             }
-            // const recipeList = document.createElement('p');
-            // const recipes = JSON.stringify(obj.recipes);
-            // recipeList.textContent = recipes;
-            // content.appendChild(recipeList);
+            masonry.layout();
         }
     } catch (SyntaxError) {}
 };
@@ -203,9 +214,10 @@ var init = function init() {
     // set up masonry content
     var grid = document.querySelector('#dynamicContent');
     masonry = new Masonry(grid, {
+        percentPosition: true,
         itemSelector: '.grid-item',
         columnWidth: '.grid-sizer',
-        percentPosition: true
+        horizonatalOrder: true
     });
 
     //make recipe button

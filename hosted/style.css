@@ -1,3 +1,5 @@
+* { box-sizing: border-box; }
+
 html, body {
   height: 100%;
   width: 100%;
@@ -73,7 +75,7 @@ hr {
 }
 
 #addRecipe {
-  width:90%;
+  width:100%;
   display: none;
   margin: auto;
   text-align: center;
@@ -89,9 +91,51 @@ hr {
 }
 
 /* MASONRY STYLING */
-.grid-item {
-  width: 20%;
-  border: 2px solid hsla(0, 0%, 0%, 0.5);
+.grid {
+  width: 100%;
+  padding: 0% 10% 0% 10%;
+  counter-reset: grid-item;
+  background-color: #333;
 }
 
-.grid-item--width2 { width: 40%; }
+/* clearfix */
+.grid:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.grid-sizer, .grid-item {
+  float: left;
+  width: 20%;
+  background: #D26;
+  border: 2px solid #333;
+  border-color: hsla(0, 0%, 0%, 0.5);
+  border-radius: 5px;
+}
+
+.grid-item--width2 { width: 25%; }
+.grid-item--width3 { width: 30%; }
+.grid-item--width4 { width: 40%; }
+
+.grid-item--selected {
+  width: 60%;
+  height: 480px;
+  z-index: 2;
+}
+
+.grid-item:before {
+  counter-increment: grid-item;
+  content: counter(grid-item);
+  display: block;
+  color: white;
+  padding-top: 0.2em;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+.grid-item:hover {
+  background: #A2C;
+  border-color: white;
+  cursor: pointer;
+}
