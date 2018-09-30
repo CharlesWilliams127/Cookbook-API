@@ -1,5 +1,5 @@
 // purely in mem
-const recipes = {};
+const recipes = [];
 
 // function to respond with a json object
 // takes request, response, status code and object to send
@@ -41,23 +41,37 @@ const addRecipe = (request, response, body) => {
 
   let responseCode = 201;
 
-  if (recipes[body.title]) {
-    responseCode = 204;
-  } else {
-    recipes[body.title] = {};
+  for (r in recipes) {
+    if (r.title === body.title) { // already exists, update info
+      console.dir(r);
+      responseCode = 204;
+      r.title = body.title;
+      r.description = body.description; 
+      r.price = body.price;
+      r.calories = body.calories;
+      r.ingredients = body.Ingredient; 
+      r.directions = body.Direction;
+      r.appliances = body.Appliance;
+      return respondJSONMeta(request, response, responseCode);
+    }
   }
-  recipes[body.title].title = body.title;
-  recipes[body.title].description = body.description;
-  recipes[body.title].price = body.price;
-  recipes[body.title].calories = body.calories;
-  recipes[body.title].ingredients = body.Ingredient;
+
+  recipes.push({
+    title: body.title,
+    description: body.description,
+    price: body.price,
+    calories: body.calories,
+    ingredients: body.Ingredient,
+    directions: body.Direction,
+    appliances: body.Appliance
+  });
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
     return respondJSON(request, response, responseCode, responseJSON);
   }
 
-  return respondJSONMeta(request, response, responseCode);
+  
 };
 
 const notFound = (request, response) => {

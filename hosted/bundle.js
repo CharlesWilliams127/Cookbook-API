@@ -1,7 +1,11 @@
 'use strict';
 
+// get reference to masonry.js
+var masonry = void 0;
+
 var ingredientCounter = 0;
 var directionCounter = 0;
+var applianceCounter = 0;
 
 // helper functions to increment variables for keeping track of items in lists
 var getIngredientCount = function getIngredientCount() {
@@ -10,11 +14,15 @@ var getIngredientCount = function getIngredientCount() {
 var getDirectionCount = function getDirectionCount() {
     return directionCounter++;
 };
+var getApplianceCount = function getApplianceCount() {
+    return applianceCounter++;
+};
 
 // a simple struct that will determine which counter to update
 var counterStruct = {
     'Ingredient': getIngredientCount,
-    'Direction': getDirectionCount
+    'Direction': getDirectionCount,
+    'Appliance': getApplianceCount
 
     //function to parse our response
 };var parseJSON = function parseJSON(xhr, content) {
@@ -22,20 +30,28 @@ var counterStruct = {
     try {
         var obj = JSON.parse(xhr.response);
         console.dir(obj);
-
-        //if message in response, add to screen
-        if (obj.message) {
-            var p = document.createElement('p');
-            p.textContent = 'Message: ' + obj.message;
-            content.appendChild(p);
-        }
-
         //if recipes in response, add to screen
         if (obj.recipes) {
-            var userList = document.createElement('p');
-            var recipes = JSON.stringify(obj.recipes);
-            userList.textContent = recipes;
-            content.appendChild(userList);
+            for (var i = 0; i < obj.recipes.length; i++) {
+                // create a new grid item for masonry
+                var gridItem = document.createElement('div');
+                gridItem.className = "grid-item"; // TODO: make grid "smart" i.e, find out which size would be best
+
+                var title = document.createElement('h2');
+                title.textContent = obj.recipes[i].title;
+
+                var description = document.createElement('p');
+                description.textContent = obj.recipes[i].description;
+
+                gridItem.appendChild(title);
+                gridItem.appendChild(description);
+
+                content.appendChild(gridItem);
+            }
+            // const recipeList = document.createElement('p');
+            // const recipes = JSON.stringify(obj.recipes);
+            // recipeList.textContent = recipes;
+            // content.appendChild(recipeList);
         }
     } catch (SyntaxError) {}
 };
@@ -48,7 +64,6 @@ var handleResponse = function handleResponse(xhr) {
     switch (xhr.status) {
         case 200:
             //success
-            content.innerHTML = '<b>Success</b>';
             break;
         case 201:
             //created
@@ -91,11 +106,23 @@ var sendPost = function sendPost(e, addRecipe) {
         description: descField.value,
         price: priceField.value,
         calories: caloriesField.value,
-        ingredients: ""
+        ingredients: "",
+        directions: "",
+        appliances: ""
 
         // populate ingredients
     };for (var i = 0; i < ingredientCounter; i++) {
         formData.ingredients.push(addRecipe.querySelector('#Ingredient' + i).value);
+    }
+
+    // populate directions
+    for (var _i = 0; _i < directionCounter; _i++) {
+        formData.directions.push(addRecipe.querySelector('#Direction' + _i).value);
+    }
+
+    // populate appliances
+    for (var _i2 = 0; _i2 < applianceCounter; _i2++) {
+        formData.appliances.push(addRecipe.querySelector('#Appliance' + _i2).value);
     }
 
     console.dir(formData);
@@ -158,9 +185,32 @@ var displayAddRecipe = function displayAddRecipe(e) {
     section.style.display = "block";
 };
 
+var hideAddRecipe = function hideAddRecipe(e) {
+    var section = document.querySelector('#addRecipe');
+    section.style.display = "none";
+
+    // delete existing content
+    var applianceList = document.querySelector('#applianceList');
+    var directionList = document.querySelector('#directionList');
+    var ingredientList = document.querySelector('#ingredientList');
+
+    applianceList.innerHTML = "";
+    directionList.innerHTML = "";
+    ingredientList.innerHTML = "";
+};
+
 var init = function init() {
+    // set up masonry content
+    var grid = document.querySelector('#dynamicContent');
+    masonry = new Masonry(grid, {
+        itemSelector: '.grid-item',
+        columnWidth: '.grid-sizer',
+        percentPosition: true
+    });
+
     //make recipe button
     var displayRecipeButton = document.querySelector("#displayAddRecipe");
+    var hideRecipeButton = document.querySelector("#hideAddRecipe");
 
     //grab forms
     var recipeForm = document.querySelector('#recipeForm');
@@ -194,6 +244,9 @@ var init = function init() {
     var displayAddRecipeContent = function displayAddRecipeContent(e) {
         return displayAddRecipe(e);
     };
+    var hideAddRecipeContent = function hideAddRecipeContent(e) {
+        return hideAddRecipe(e);
+    };
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
@@ -202,7 +255,9 @@ var init = function init() {
     directionButton.addEventListener('click', addDirection);
     applianceButton.addEventListener('click', addAppliance);
     displayRecipeButton.addEventListener('click', displayAddRecipeContent);
+    hideRecipeButton.addEventListener('click', hideAddRecipeContent);
 
+    //console.dir(msnry);
     // automatically display known recipes
     requestUpdate();
 };

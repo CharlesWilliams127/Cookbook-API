@@ -11,6 +11,7 @@ const urlStruct = {
   '/style.css': htmlHandler.getCSS,
   '/bundle.js': htmlHandler.getBundle,
   '/Add-512.png': htmlHandler.getAddImage,
+  '/masonry.js': htmlHandler.getMasonry,
   '/getRecipes': jsonHandler.getRecipes,
   '/notReal': jsonHandler.notFound,
   getrecipesMeta: jsonHandler.getRecipesMeta,

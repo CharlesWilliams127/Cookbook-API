@@ -3,6 +3,7 @@
 <head>
   <title>Cookbook API</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
+  <script src="masonry.js"></script>
   <script src="bundle.js"></script>
 </head>
 <body>
@@ -12,8 +13,9 @@
     <div class="top-element">
       <input type="text" value="Filter"/>
     </div>
-    <div class="top-element">
-      <img id="displayAddRecipe" class="displayButton" src="./Add-512.png" alt="Add"/>      
+    <div class="top-element displayButton" id="displayAddRecipe">
+      <img src="./Add-512.png" alt="Add" name="AddRecipeButton"/>
+      <label for="AddRecipeButton">Add Recipe</label>      
     </div>
   </section>
 
@@ -31,16 +33,17 @@
         <label for="calories">Calories: </label>
         <input id="caloriesField" type="number" name="calories" min="0" step="1"/>
         <input type="submit" value="Add Recipe" />
+        <input id="ingredientButton" type="button" value="Add Ingredient"/>
         <ul id="ingredientList">
-          <li><input id="ingredientButton" type="button" value="Add Ingredient"/></li>
         </ul>
+        <input id="directionButton" type="button" value="Add Direction"/>
         <ol id="directionList">
-          <li><input id="directionButton" type="button" value="Add Direction"/></li>
         </ol>
+        <input id="applianceButton" type="button" value="Add Appliance"/>
         <ul id="applianceList">
-          <li><input id="applianceButton" type="button" value="Add Appliance"/></li>
         </ul>
       </form>
+      <div id="hideAddRecipe" class="displayButton">Hide</div>
     </section>
 
     <section id="get">
@@ -49,9 +52,10 @@
       </form>
     </section>
 
-    <section id="dynamicContent">
+    <div id="dynamicContent" class="grid">
+      <!--<div class="grid-item"></div>-->
       <!--Where recipe content will get loaded-->
-    </section>
+    </div>
   </section>
 </body>
 </html>

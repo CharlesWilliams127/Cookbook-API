@@ -3,6 +3,7 @@ const fs = require('fs');
 const index = fs.readFileSync(`${__dirname}/../hosted/client.html`);
 const css = fs.readFileSync(`${__dirname}/../hosted/style.css`);
 const jsBundle = fs.readFileSync(`${__dirname}/../hosted/bundle.js`);
+const jsMasonry = fs.readFileSync(`${__dirname}/../node_modules/masonry-layout/dist/masonry.pkgd.min.js`);
 const addImage = fs.readFileSync(`${__dirname}/../hosted/Add-512.png`);
 
 const respond = (request, response, content, type, code) => {
@@ -29,9 +30,16 @@ const getAddImage = (request, response) => {
   respond(request, response, addImage, 'image/png', 200)
 }
 
+const getMasonry = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'application/javascript' });
+  response.write(jsMasonry);
+  response.end();
+}
+
 module.exports = {
   getIndex,
   getCSS,
   getBundle,
   getAddImage,
+  getMasonry,
 };

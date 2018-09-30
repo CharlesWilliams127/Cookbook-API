@@ -20,5 +20,8 @@
     "nodemon": "^1.18.4"
   },
   "author": "Charles Williams",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "masonry-layout": "^4.2.2"
+  }
 }

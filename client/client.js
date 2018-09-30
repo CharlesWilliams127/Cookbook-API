@@ -1,14 +1,20 @@
+// get reference to masonry.js
+let masonry;
+
 let ingredientCounter = 0;
 let directionCounter = 0;
+let applianceCounter = 0;
 
 // helper functions to increment variables for keeping track of items in lists
 const getIngredientCount = () => { return ingredientCounter++ };
 const getDirectionCount = () => { return directionCounter++; };
+const getApplianceCount = () => { return applianceCounter++; };
 
 // a simple struct that will determine which counter to update
 const counterStruct = {
     'Ingredient': getIngredientCount,
     'Direction': getDirectionCount,
+    'Appliance': getApplianceCount,
 }
 
 //function to parse our response
@@ -17,20 +23,28 @@ const parseJSON = (xhr, content) => {
     try {
         const obj = JSON.parse(xhr.response);
         console.dir(obj);
-        
-        //if message in response, add to screen
-        if(obj.message) {
-        const p = document.createElement('p');
-        p.textContent = `Message: ${obj.message}`;
-        content.appendChild(p);
-        }
-        
         //if recipes in response, add to screen
         if(obj.recipes) {
-        const userList = document.createElement('p');
-        const recipes = JSON.stringify(obj.recipes);
-        userList.textContent = recipes;
-        content.appendChild(userList);
+            for (let i = 0; i < obj.recipes.length; i++) {
+                // create a new grid item for masonry
+                const gridItem = document.createElement('div');
+                gridItem.className = "grid-item"; // TODO: make grid "smart" i.e, find out which size would be best
+
+                const title = document.createElement('h2');
+                title.textContent = obj.recipes[i].title;
+
+                const description = document.createElement('p');
+                description.textContent = obj.recipes[i].description;
+
+                gridItem.appendChild(title);
+                gridItem.appendChild(description);
+
+                content.appendChild(gridItem);
+            }
+            // const recipeList = document.createElement('p');
+            // const recipes = JSON.stringify(obj.recipes);
+            // recipeList.textContent = recipes;
+            // content.appendChild(recipeList);
         }
     }
     catch(SyntaxError) {}
@@ -43,7 +57,6 @@ const handleResponse = (xhr) => {
     //check the status code
     switch(xhr.status) {
         case 200: //success
-        content.innerHTML = `<b>Success</b>`;
         break;
         case 201: //created
         content.innerHTML = '<b>Create</b>';
@@ -81,12 +94,24 @@ const sendPost = (e, addRecipe) => {
         description: descField.value,
         price: priceField.value,
         calories: caloriesField.value,
-        ingredients: ""
+        ingredients: "",
+        directions: "",
+        appliances: ""
     }
 
     // populate ingredients
     for (let i = 0; i < ingredientCounter; i++) {
         formData.ingredients.push(addRecipe.querySelector(`#Ingredient${i}`).value);
+    }
+
+    // populate directions
+    for (let i = 0; i < directionCounter; i++) {
+        formData.directions.push(addRecipe.querySelector(`#Direction${i}`).value);
+    }
+
+    // populate appliances
+    for (let i = 0; i < applianceCounter; i++) {
+        formData.appliances.push(addRecipe.querySelector(`#Appliance${i}`).value);
     }
 
     console.dir(formData);
@@ -145,9 +170,32 @@ const displayAddRecipe = (e) => {
     section.style.display = "block";
 }
 
+const hideAddRecipe = (e) => {
+    const section = document.querySelector('#addRecipe');
+    section.style.display = "none";
+
+    // delete existing content
+    const applianceList = document.querySelector('#applianceList');
+    const directionList = document.querySelector('#directionList');
+    const ingredientList = document.querySelector('#ingredientList');
+
+    applianceList.innerHTML = "";
+    directionList.innerHTML = "";
+    ingredientList.innerHTML = "";
+}
+
 const init = () => {
+    // set up masonry content
+    const grid = document.querySelector('#dynamicContent');
+    masonry = new Masonry(grid, {
+        itemSelector: '.grid-item',
+        columnWidth: '.grid-sizer',
+        percentPosition: true
+    });
+
     //make recipe button
     const displayRecipeButton = document.querySelector("#displayAddRecipe");
+    const hideRecipeButton = document.querySelector("#hideAddRecipe");
 
     //grab forms
     const recipeForm = document.querySelector('#recipeForm');
@@ -169,6 +217,7 @@ const init = () => {
     const addDirection = (e) => addItem(e, directionList, 'Direction');
     const addAppliance = (e) => addItem(e, applianceList, 'Appliance');
     const displayAddRecipeContent = (e) => displayAddRecipe(e);
+    const hideAddRecipeContent = (e) => hideAddRecipe(e);
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
@@ -177,7 +226,9 @@ const init = () => {
     directionButton.addEventListener('click', addDirection);
     applianceButton.addEventListener('click', addAppliance);
     displayRecipeButton.addEventListener('click', displayAddRecipeContent);
+    hideRecipeButton.addEventListener('click', hideAddRecipeContent);
 
+    //console.dir(msnry);
     // automatically display known recipes
     requestUpdate();
     
