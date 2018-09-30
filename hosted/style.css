@@ -94,8 +94,6 @@ hr {
 .grid {
   width: 100%;
   padding: 0% 10% 0% 10%;
-  counter-reset: grid-item;
-  background-color: #333;
 }
 
 /* clearfix */
@@ -105,13 +103,17 @@ hr {
   clear: both;
 }
 
-.grid-sizer, .grid-item {
+.grid-sizer,.grid-item {
   float: left;
   width: 20%;
-  background: #D26;
-  border: 2px solid #333;
+  background: #fff;
+  border: 2px solid #E8E8E8;
+  box-shadow: 3px 3px 20px rgb(145, 145, 145);
   border-color: hsla(0, 0%, 0%, 0.5);
-  border-radius: 5px;
+  border-radius:15px;
+  margin-bottom: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 
 .grid-item--width2 { width: 25%; }
@@ -125,8 +127,6 @@ hr {
 }
 
 .grid-item:before {
-  counter-increment: grid-item;
-  content: counter(grid-item);
   display: block;
   color: white;
   padding-top: 0.2em;
@@ -135,7 +135,7 @@ hr {
 }
 
 .grid-item:hover {
-  background: #A2C;
+  background: #E8E8E8;
   border-color: white;
   cursor: pointer;
 }

@@ -32,7 +32,7 @@ const addRecipe = (request, response, body) => {
     message: 'There are missing parameters.',
   };
 
-  console.dir(body);
+  //console.dir(body);
 
   if (!body.title) {
     responseJSON.id = 'missingParams';
@@ -42,8 +42,9 @@ const addRecipe = (request, response, body) => {
   let responseCode = 201;
 
   for (r in recipes) {
+    console.dir(r);
     if (r.title === body.title) { // already exists, update info
-      console.dir(r);
+      
       responseCode = 204;
       r.title = body.title;
       r.description = body.description; 

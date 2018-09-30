@@ -78,23 +78,18 @@ var handleResponse = function handleResponse(xhr) {
             break;
         case 201:
             //created
-            content.innerHTML = '<b>Create</b>';
             break;
         case 204:
             //updated (no response back from server)
-            content.innerHTML = '<b>Updated (No Content)</b>';
             return;
         case 400:
             //bad request
-            content.innerHTML = '<b>Bad Request</b>';
             break;
         case 404:
             //not found
-            content.innerHTML = '<b>Resource Not Found</b>';
             break;
         default:
             //any other status code
-            content.innerHTML = 'Error code not implemented by client.';
             break;
     }
     //parse response 
@@ -117,23 +112,23 @@ var sendPost = function sendPost(e, addRecipe) {
         description: descField.value,
         price: priceField.value,
         calories: caloriesField.value,
-        ingredients: "",
-        directions: "",
-        appliances: ""
+        Ingredient: [],
+        Direction: [],
+        Appliance: []
 
         // populate ingredients
     };for (var i = 0; i < ingredientCounter; i++) {
-        formData.ingredients.push(addRecipe.querySelector('#Ingredient' + i).value);
+        formData.Ingredient.push(addRecipe.querySelector('#Ingredient' + i).value);
     }
 
     // populate directions
     for (var _i = 0; _i < directionCounter; _i++) {
-        formData.directions.push(addRecipe.querySelector('#Direction' + _i).value);
+        formData.Direction.push(addRecipe.querySelector('#Direction' + _i).value);
     }
 
     // populate appliances
     for (var _i2 = 0; _i2 < applianceCounter; _i2++) {
-        formData.appliances.push(addRecipe.querySelector('#Appliance' + _i2).value);
+        formData.Appliance.push(addRecipe.querySelector('#Appliance' + _i2).value);
     }
 
     console.dir(formData);
@@ -217,7 +212,8 @@ var init = function init() {
         percentPosition: true,
         itemSelector: '.grid-item',
         columnWidth: '.grid-sizer',
-        horizonatalOrder: true
+        horizonatalOrder: true,
+        gutter: 10
     });
 
     //make recipe button

@@ -39,8 +39,10 @@ const handlePost = (request, response, parsedUrl) => {
     // on end of upload stream.
     request.on('end', () => {
       const bodyString = Buffer.concat(body).toString();
+      //console.dir(bodyString);
 
-      const bodyParams = query.parse(bodyString);
+      const bodyParams = JSON.parse(bodyString);
+      console.dir(bodyParams);
 
       // pass to our addUser function
       jsonHandler.addRecipe(request, res, bodyParams);
