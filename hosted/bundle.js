@@ -46,6 +46,22 @@ var counterStruct = {
                 gridItem.appendChild(title);
                 gridItem.appendChild(description);
 
+                // container for content that won't be displayed until the grid item is expanded
+                var gridItemInnerContent = document.createElement('div');
+                gridItemInnerContent.className = "grid-item-inner-content";
+
+                if (obj.recipes[i].price) {
+                    var priceDesc = document.createElement('p');
+                    priceDesc.textContent = 'Price: ' + obj.recipes[i].price;
+                    gridItemInnerContent.appendChild(priceDesc);
+                }
+                if (obj.recipes[i].calories) {
+                    var caloriesDesc = document.createElement('p');
+                    caloriesDesc.textContent = 'Price: ' + obj.recipes[i].calories;
+                    gridItemInnerContent.appendChild(caloriesDesc);
+                }
+
+                gridItem.appendChild(gridItemInnerContent);
                 content.appendChild(gridItem);
 
                 // add to masonry layout

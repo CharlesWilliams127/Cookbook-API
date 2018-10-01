@@ -30,6 +30,16 @@ hr {
   margin-top: 50px;
 }
 
+.form-split {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+}
+
+.form-split-element {
+  display: block;
+}
+
 .top-element, .top-element-right {
   display: inline;
   color: #3a3c3d;
@@ -44,6 +54,7 @@ hr {
   /*color: #3a3c3d;*/
   background-color: #E8E8E8;
   border-radius: 10px;
+  border-style: none;
   font-size: 14pt;
   padding: 5px;
   width: 50%;
@@ -90,6 +101,19 @@ hr {
   text-align: center;
 }
 
+/* REUSABLE ELEMENTS */
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.center {
+  text-align: center;
+}
+
 /* MASONRY STYLING */
 .grid {
   width: 100%;
@@ -114,6 +138,12 @@ hr {
   margin-bottom: 10px;
   margin-right: 5px;
   margin-left: 5px;
+  transition-property: background, transform;
+  transition-duration: 0.25s;
+}
+
+.grid-item-inner-content {
+  display: none;
 }
 
 .grid-item--width2 { width: 25%; }
@@ -126,12 +156,17 @@ hr {
   z-index: 2;
 }
 
+.grid-item--selected .grid-item-inner-content{
+  display: block;
+}
+
 .grid-item:before {
   display: block;
   color: white;
   padding-top: 0.2em;
   text-align: center;
   font-size: 1.4rem;
+  transform: scale(0);
 }
 
 .grid-item:hover {

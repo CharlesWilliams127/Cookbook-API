@@ -24,24 +24,44 @@
       <!--The form to add a recipe-->
       <h3>Add a Recipe</h3>
       <form id="recipeForm" action="/addRecipe" method="post">
-        <label for="title">Title: </label>
-        <input id="titleField" type="text" name="title" />
-        <label for="description">Description: </label>
-        <input id="descriptionField" type="text" name="description" />
-        <label for="price">Price: </label>
-        <input id="priceField" type="number" name="price" min="0" step="1"/>
-        <label for="calories">Calories: </label>
-        <input id="caloriesField" type="number" name="calories" min="0" step="1"/>
-        <input type="submit" value="Add Recipe" />
-        <input id="ingredientButton" type="button" value="Add Ingredient"/>
-        <ul id="ingredientList">
-        </ul>
-        <input id="directionButton" type="button" value="Add Direction"/>
-        <ol id="directionList">
-        </ol>
-        <input id="applianceButton" type="button" value="Add Appliance"/>
-        <ul id="applianceList">
-        </ul>
+        <div class = "form-split left">
+          <div class="form-split-element">
+            <label for="title">Title: </label>
+            <input id="titleField" type="text" name="title" />
+          </div>
+          <div class="form-split-element">
+            <label for="description">Description: </label>
+            <input id="descriptionField" type="text" name="description" />
+          </div>
+          <div class="form-split-element">
+            <label for="price">Price: </label>
+            <input id="priceField" type="number" name="price" min="0" step="1"/>
+          </div>
+          <div class="form-split-element">
+            <label for="calories">Calories: </label>
+            <input id="caloriesField" type="number" name="calories" min="0" step="1"/>
+          </div>
+          <div class="form-split-element">
+            <input type="submit" value="Add Recipe" />
+          </div>
+        </div>
+        <div class="form-split">
+          <div class="form-split-element">
+            <input id="ingredientButton" type="button" value="Add Ingredient"/>
+            <ul id="ingredientList">
+            </ul>
+          </div>
+          <div class="form-split-element">
+            <input id="directionButton" type="button" value="Add Direction"/>
+            <ol id="directionList">
+            </ol>
+          </div>
+          <div class="form-split-element">
+            <input id="applianceButton" type="button" value="Add Appliance"/>
+            <ul id="applianceList">
+            </ul>
+          </div>
+        </div>
       </form>
       <div id="hideAddRecipe" class="displayButton">Hide</div>
     </section>
