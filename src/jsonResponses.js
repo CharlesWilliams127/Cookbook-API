@@ -32,7 +32,8 @@ const addRecipe = (request, response, body) => {
     message: 'There are missing parameters.',
   };
 
-  //console.dir(body);
+  // flag to let us know when to exit the method
+  let updateFlag = false;
 
   if (!body.title) {
     responseJSON.id = 'missingParams';
@@ -41,10 +42,9 @@ const addRecipe = (request, response, body) => {
 
   let responseCode = 201;
 
-  for (r in recipes) {
+  recipes.forEach(function(r){
     console.dir(r);
-    if (r.title === body.title) { // already exists, update info
-      
+    if (r.title === body.title) { // already exists, update info    
       responseCode = 204;
       r.title = body.title;
       r.description = body.description; 
@@ -53,25 +53,29 @@ const addRecipe = (request, response, body) => {
       r.ingredients = body.Ingredient; 
       r.directions = body.Direction;
       r.appliances = body.Appliance;
-      return respondJSONMeta(request, response, responseCode);
+      updateFlag = true;
     }
-  }
-
-  recipes.push({
-    title: body.title,
-    description: body.description,
-    price: body.price,
-    calories: body.calories,
-    ingredients: body.Ingredient,
-    directions: body.Direction,
-    appliances: body.Appliance
   });
 
-  if (responseCode === 201) {
-    responseJSON.message = 'Created Successfully';
-    return respondJSON(request, response, responseCode, responseJSON);
+  if (updateFlag) {
+    return respondJSONMeta(request, response, responseCode);
   }
+  else{
+    recipes.push({
+      title: body.title,
+      description: body.description,
+      price: body.price,
+      calories: body.calories,
+      ingredients: body.Ingredient,
+      directions: body.Direction,
+      appliances: body.Appliance
+    });
 
+    if (responseCode === 201) {
+      responseJSON.message = 'Created Successfully';
+      return respondJSON(request, response, responseCode, responseJSON);
+    }
+  }
   
 };
 

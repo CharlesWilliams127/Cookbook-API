@@ -26,10 +26,6 @@ hr {
   border-bottom: 2px solid #E8E8E8;
 }
 
-#content {
-  margin-top: 50px;
-}
-
 .form-split {
   display: inline-block;
   vertical-align: top;
@@ -96,7 +92,7 @@ hr {
 }
 
 #content {
-  margin-top: 100px;
+  margin-top: 75px;
   font-size: 2em;
   text-align: center;
 }
