@@ -52,8 +52,44 @@ const parseJSON = (xhr, content) => {
                 }
                 if(obj.recipes[i].calories) {
                     const caloriesDesc = document.createElement('p');
-                    caloriesDesc.textContent = `Price: ${obj.recipes[i].calories}`;
+                    caloriesDesc.textContent = `Calories: ${obj.recipes[i].calories}`;
                     gridItemInnerContent.appendChild(caloriesDesc);
+                }
+                if(obj.recipes[i].ingredients) {
+                    const header = document.createElement('h3');
+                    header.textContent = "Ingredients:";
+                    const list = document.createElement('ul');
+                    obj.recipes[i].ingredients.forEach(ingredient => {
+                        const node = document.createElement("li");
+                        node.textContent = ingredient;
+                        list.appendChild(node);
+                    });
+                    gridItemInnerContent.appendChild(header);
+                    gridItemInnerContent.appendChild(list);
+                }
+                if(obj.recipes[i].directions) {
+                    const header = document.createElement('h3');
+                    header.textContent = "Directions:";
+                    const list = document.createElement('ol');
+                    obj.recipes[i].directions.forEach(direction => {
+                        const node = document.createElement("li");
+                        node.textContent = direction;
+                        list.appendChild(node);
+                    });
+                    gridItemInnerContent.appendChild(header);
+                    gridItemInnerContent.appendChild(list);
+                }
+                if(obj.recipes[i].appliances) {
+                    const header = document.createElement('h3');
+                    header.textContent = "Appliances Needed:";
+                    const list = document.createElement('ul');
+                    obj.recipes[i].appliances.forEach(appliance => {
+                        const node = document.createElement("li");
+                        node.textContent = appliance;
+                        list.appendChild(node);
+                    });
+                    gridItemInnerContent.appendChild(header);
+                    gridItemInnerContent.appendChild(list);
                 }
 
                 gridItem.appendChild(gridItemInnerContent);
@@ -171,6 +207,8 @@ const sendPost = (e, addRecipe) => {
 
     xhr.send(JSON.stringify(formData));
 
+    //requestUpdate(e);
+
     //prevent the browser's default action (to send the form on its own)
     e.preventDefault();
     //return false to prevent the browser from trying to change page
@@ -210,6 +248,7 @@ const displayAddRecipe = (e) => {
     section.style.display = "block";
 }
 
+// responsible for hiding the addRecipe section and clearing it's contents
 const hideAddRecipe = (e) => {
     const section = document.querySelector('#addRecipe');
     section.style.display = "none";
@@ -226,10 +265,10 @@ const hideAddRecipe = (e) => {
     applianceList.innerHTML = "";
     directionList.innerHTML = "";
     ingredientList.innerHTML = "";
-    titleField.innerHTML = "";
-    descField.innerHTML = "";
-    priceField.innerHTML = "";
-    caloriesField.innerHTML = "";
+    titleField.value = "";
+    descField.value = "";
+    priceField.value = "";
+    caloriesField.value = "";
 }
 
 const hideMessageArea = (e) => {

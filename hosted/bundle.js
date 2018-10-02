@@ -59,8 +59,44 @@ var counterStruct = {
                 }
                 if (obj.recipes[i].calories) {
                     var caloriesDesc = document.createElement('p');
-                    caloriesDesc.textContent = 'Price: ' + obj.recipes[i].calories;
+                    caloriesDesc.textContent = 'Calories: ' + obj.recipes[i].calories;
                     gridItemInnerContent.appendChild(caloriesDesc);
+                }
+                if (obj.recipes[i].ingredients) {
+                    var header = document.createElement('h3');
+                    header.textContent = "Ingredients:";
+                    var list = document.createElement('ul');
+                    obj.recipes[i].ingredients.forEach(function (ingredient) {
+                        var node = document.createElement("li");
+                        node.textContent = ingredient;
+                        list.appendChild(node);
+                    });
+                    gridItemInnerContent.appendChild(header);
+                    gridItemInnerContent.appendChild(list);
+                }
+                if (obj.recipes[i].directions) {
+                    var _header = document.createElement('h3');
+                    _header.textContent = "Directions:";
+                    var _list = document.createElement('ol');
+                    obj.recipes[i].directions.forEach(function (direction) {
+                        var node = document.createElement("li");
+                        node.textContent = direction;
+                        _list.appendChild(node);
+                    });
+                    gridItemInnerContent.appendChild(_header);
+                    gridItemInnerContent.appendChild(_list);
+                }
+                if (obj.recipes[i].appliances) {
+                    var _header2 = document.createElement('h3');
+                    _header2.textContent = "Appliances Needed:";
+                    var _list2 = document.createElement('ul');
+                    obj.recipes[i].appliances.forEach(function (appliance) {
+                        var node = document.createElement("li");
+                        node.textContent = appliance;
+                        _list2.appendChild(node);
+                    });
+                    gridItemInnerContent.appendChild(_header2);
+                    gridItemInnerContent.appendChild(_list2);
                 }
 
                 gridItem.appendChild(gridItemInnerContent);
@@ -188,6 +224,8 @@ var sendPost = function sendPost(e, addRecipe) {
 
     xhr.send(JSON.stringify(formData));
 
+    //requestUpdate(e);
+
     //prevent the browser's default action (to send the form on its own)
     e.preventDefault();
     //return false to prevent the browser from trying to change page
@@ -229,6 +267,7 @@ var displayAddRecipe = function displayAddRecipe(e) {
     section.style.display = "block";
 };
 
+// responsible for hiding the addRecipe section and clearing it's contents
 var hideAddRecipe = function hideAddRecipe(e) {
     var section = document.querySelector('#addRecipe');
     section.style.display = "none";
@@ -245,10 +284,10 @@ var hideAddRecipe = function hideAddRecipe(e) {
     applianceList.innerHTML = "";
     directionList.innerHTML = "";
     ingredientList.innerHTML = "";
-    titleField.innerHTML = "";
-    descField.innerHTML = "";
-    priceField.innerHTML = "";
-    caloriesField.innerHTML = "";
+    titleField.value = "";
+    descField.value = "";
+    priceField.value = "";
+    caloriesField.value = "";
 };
 
 var hideMessageArea = function hideMessageArea(e) {

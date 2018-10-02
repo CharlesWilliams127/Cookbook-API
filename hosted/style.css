@@ -35,6 +35,7 @@ hr {
 
 .form-split-element {
   display: block;
+  margin-bottom: 15px;
 }
 
 .top-element, .top-element-right {
@@ -147,9 +148,9 @@ hr {
   box-shadow: 3px 3px 20px rgb(145, 145, 145);
   border-color: hsla(0, 0%, 0%, 0.5);
   border-radius:15px;
-  /*margin-bottom: 10px;
+  margin-bottom: 10px;
   margin-right: 5px;
-  margin-left: 5px;*/
+  margin-left: 5px;
   transition-property: background, transform;
   transition-duration: 0.25s;
 }
@@ -164,7 +165,7 @@ hr {
 
 .grid-item--selected {
   width: 60%;
-  height: 480px;
+  /*height: 480px;*/
   z-index: 2;
 }
 

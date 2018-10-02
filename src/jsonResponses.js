@@ -42,21 +42,6 @@ const addRecipe = (request, response, body) => {
 
   let responseCode = 201;
 
-  // recipes.forEach((r) => {
-  //   console.dir(r);
-  //   if (r.title === body.title) { // already exists, update info
-  //     responseCode = 204;
-  //     r.title = body.title;
-  //     r.description = body.description;
-  //     r.price = body.price;
-  //     r.calories = body.calories;
-  //     r.ingredients = body.Ingredient;
-  //     r.directions = body.Direction;
-  //     r.appliances = body.Appliance;
-  //     updateFlag = true;
-  //   }
-  // });
-
   for (let i = 0; i < recipes.length; i++) {
     if (recipes[i].title === body.title) {
       responseCode = 204;
