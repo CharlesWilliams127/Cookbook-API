@@ -97,7 +97,7 @@ hr {
   font-size: 2em;
 }
 
-#addRecipe {
+#addRecipe, #messageArea {
   width:100%;
   display: none;
   margin: auto;

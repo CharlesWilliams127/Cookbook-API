@@ -85,26 +85,48 @@ var counterStruct = {
     } catch (SyntaxError) {}
 };
 
+// A helper method to append items to the messageArea
+var addMessage = function addMessage(messageArea, messageContent) {
+    messageArea.style.display = "block";
+    var header = document.createElement("h3");
+    var message = document.createTextNode(messageContent);
+    header.appendChild(message);
+    header.setAttribute('id', "deleteMessage");
+    var hideButton = document.getElementById("hideMessageArea");
+    messageArea.insertBefore(header, hideButton);
+};
+
 //function to handle our response
 var handleResponse = function handleResponse(xhr) {
     var content = document.querySelector('#dynamicContent');
+    var messageArea = document.querySelector('#messageArea');
+
+    // remove existing message
+    var elem = document.getElementById("deleteMessage");
+    if (elem) {
+        messageArea.removeChild(elem);
+    }
 
     //check the status code
     switch (xhr.status) {
         case 200:
-            //success
+            //success -- only action should be to display results
             break;
         case 201:
             //created
+            addMessage(messageArea, "Recipe Successfully Added!");
             break;
         case 204:
             //updated (no response back from server)
+            addMessage(messageArea, "Recipe Successfully Updated!");
             return;
         case 400:
             //bad request
+            addMessage(messageArea, "Something Went Wrong Adding a Recipe.");
             break;
         case 404:
             //not found
+            addMessage(messageArea, "Content Not Found");
             break;
         default:
             //any other status code
@@ -229,6 +251,11 @@ var hideAddRecipe = function hideAddRecipe(e) {
     caloriesField.innerHTML = "";
 };
 
+var hideMessageArea = function hideMessageArea(e) {
+    var section = document.querySelector('#messageArea');
+    section.style.display = "none";
+};
+
 var init = function init() {
     // set up masonry content
     var grid = document.querySelector('#dynamicContent');
@@ -242,6 +269,9 @@ var init = function init() {
     //make recipe button
     var displayRecipeButton = document.querySelector("#displayAddRecipe");
     var hideRecipeButton = document.querySelector("#hideAddRecipe");
+
+    // message area
+    var hideMessageAreaButton = document.querySelector("#hideMessageArea");
 
     //grab forms
     var recipeForm = document.querySelector('#recipeForm');
@@ -278,6 +308,9 @@ var init = function init() {
     var hideAddRecipeContent = function hideAddRecipeContent(e) {
         return hideAddRecipe(e);
     };
+    var hideMessageAreaContent = function hideMessageAreaContent(e) {
+        return hideMessageArea(e);
+    };
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
@@ -287,6 +320,7 @@ var init = function init() {
     applianceButton.addEventListener('click', addAppliance);
     displayRecipeButton.addEventListener('click', displayAddRecipeContent);
     hideRecipeButton.addEventListener('click', hideAddRecipeContent);
+    hideMessageAreaButton.addEventListener('click', hideMessageAreaContent);
 
     //console.dir(msnry);
     // automatically display known recipes

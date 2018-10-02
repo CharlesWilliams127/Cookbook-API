@@ -75,21 +75,43 @@ const parseJSON = (xhr, content) => {
     catch(SyntaxError) {}
 };
 
+// A helper method to append items to the messageArea
+const addMessage = (messageArea, messageContent) => {
+    messageArea.style.display = "block";
+    const header = document.createElement("h3");
+    const message = document.createTextNode(messageContent);
+    header.appendChild(message);
+    header.setAttribute('id', "deleteMessage");
+    const hideButton = document.getElementById("hideMessageArea")
+    messageArea.insertBefore(header, hideButton);
+};
+
 //function to handle our response
 const handleResponse = (xhr) => {
     const content = document.querySelector('#dynamicContent');
+    const messageArea = document.querySelector('#messageArea');
+
+    // remove existing message
+    const elem = document.getElementById("deleteMessage");
+    if (elem) {
+        messageArea.removeChild(elem);
+    }
 
     //check the status code
     switch(xhr.status) {
-        case 200: //success
+        case 200: //success -- only action should be to display results
         break;
         case 201: //created
+        addMessage(messageArea, "Recipe Successfully Added!");
         break;
         case 204: //updated (no response back from server)
+        addMessage(messageArea, "Recipe Successfully Updated!");
         return;
         case 400: //bad request
+        addMessage(messageArea, "Something Went Wrong Adding a Recipe.");
         break;
         case 404: //not found
+        addMessage(messageArea, "Content Not Found");
         break;
         default: //any other status code
         break;
@@ -210,6 +232,11 @@ const hideAddRecipe = (e) => {
     caloriesField.innerHTML = "";
 }
 
+const hideMessageArea = (e) => {
+    const section = document.querySelector('#messageArea');
+    section.style.display = "none";
+}
+
 const init = () => {
     // set up masonry content
     const grid = document.querySelector('#dynamicContent');
@@ -223,6 +250,9 @@ const init = () => {
     //make recipe button
     const displayRecipeButton = document.querySelector("#displayAddRecipe");
     const hideRecipeButton = document.querySelector("#hideAddRecipe");
+
+    // message area
+    const hideMessageAreaButton = document.querySelector("#hideMessageArea");
 
     //grab forms
     const recipeForm = document.querySelector('#recipeForm');
@@ -245,6 +275,7 @@ const init = () => {
     const addAppliance = (e) => addItem(e, applianceList, 'Appliance');
     const displayAddRecipeContent = (e) => displayAddRecipe(e);
     const hideAddRecipeContent = (e) => hideAddRecipe(e);
+    const hideMessageAreaContent = (e) => hideMessageArea(e);
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
@@ -254,6 +285,7 @@ const init = () => {
     applianceButton.addEventListener('click', addAppliance);
     displayRecipeButton.addEventListener('click', displayAddRecipeContent);
     hideRecipeButton.addEventListener('click', hideAddRecipeContent);
+    hideMessageAreaButton.addEventListener('click', hideMessageAreaContent);
 
     //console.dir(msnry);
     // automatically display known recipes
