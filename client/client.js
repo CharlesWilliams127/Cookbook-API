@@ -55,7 +55,7 @@ const parseJSON = (xhr, content) => {
                     caloriesDesc.textContent = `Calories: ${obj.recipes[i].calories}`;
                     gridItemInnerContent.appendChild(caloriesDesc);
                 }
-                if(obj.recipes[i].ingredients) {
+                if(obj.recipes[i].ingredients.length > 0) {
                     const header = document.createElement('h3');
                     header.textContent = "Ingredients:";
                     const list = document.createElement('ul');
@@ -67,7 +67,7 @@ const parseJSON = (xhr, content) => {
                     gridItemInnerContent.appendChild(header);
                     gridItemInnerContent.appendChild(list);
                 }
-                if(obj.recipes[i].directions) {
+                if(obj.recipes[i].directions.length > 0) {
                     const header = document.createElement('h3');
                     header.textContent = "Directions:";
                     const list = document.createElement('ol');
@@ -79,7 +79,7 @@ const parseJSON = (xhr, content) => {
                     gridItemInnerContent.appendChild(header);
                     gridItemInnerContent.appendChild(list);
                 }
-                if(obj.recipes[i].appliances) {
+                if(obj.recipes[i].appliances.length > 0) {
                     const header = document.createElement('h3');
                     header.textContent = "Appliances Needed:";
                     const list = document.createElement('ul');

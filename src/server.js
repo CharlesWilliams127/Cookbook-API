@@ -52,6 +52,8 @@ const handlePost = (request, response, parsedUrl) => {
 
 const handleHeadGet = (request, response, parsedUrl) => {
   // route to correct method based on url
+  //if (request.method === 'GET')
+
   if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response);
   } else {

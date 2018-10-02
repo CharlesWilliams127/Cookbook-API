@@ -62,7 +62,7 @@ var counterStruct = {
                     caloriesDesc.textContent = 'Calories: ' + obj.recipes[i].calories;
                     gridItemInnerContent.appendChild(caloriesDesc);
                 }
-                if (obj.recipes[i].ingredients) {
+                if (obj.recipes[i].ingredients.length > 0) {
                     var header = document.createElement('h3');
                     header.textContent = "Ingredients:";
                     var list = document.createElement('ul');
@@ -74,7 +74,7 @@ var counterStruct = {
                     gridItemInnerContent.appendChild(header);
                     gridItemInnerContent.appendChild(list);
                 }
-                if (obj.recipes[i].directions) {
+                if (obj.recipes[i].directions.length > 0) {
                     var _header = document.createElement('h3');
                     _header.textContent = "Directions:";
                     var _list = document.createElement('ol');
@@ -86,7 +86,7 @@ var counterStruct = {
                     gridItemInnerContent.appendChild(_header);
                     gridItemInnerContent.appendChild(_list);
                 }
-                if (obj.recipes[i].appliances) {
+                if (obj.recipes[i].appliances.length > 0) {
                     var _header2 = document.createElement('h3');
                     _header2.textContent = "Appliances Needed:";
                     var _list2 = document.createElement('ul');
