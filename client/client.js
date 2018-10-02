@@ -132,8 +132,6 @@ const sendPost = (e, addRecipe) => {
         formData.Appliance.push(addRecipe.querySelector(`#Appliance${i}`).value);
     }
 
-    console.dir(formData);
-
     const xhr = new XMLHttpRequest();
     xhr.open(recipeMethod, recipeAction);
 
@@ -155,7 +153,7 @@ const sendPost = (e, addRecipe) => {
     return false;
 };
 
-const requestUpdate = () => {
+const requestUpdate = (e) => {
 
     const xhr = new XMLHttpRequest();
 
@@ -169,7 +167,7 @@ const requestUpdate = () => {
     xhr.send();
 
     //cancel browser's default action
-    //e.preventDefault();
+    e.preventDefault();
     //return false to prevent page redirection from a form
     return false;
 };
@@ -232,7 +230,7 @@ const init = () => {
 
     //create handlers
     const addRecipe = (e) => sendPost(e, recipeForm);
-    const getRecipes = (e) => requestUpdate(e, getForm);
+    const getRecipes = (e) => requestUpdate(e);
     const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient');
     const addDirection = (e) => addItem(e, directionList, 'Direction');
     const addAppliance = (e) => addItem(e, applianceList, 'Appliance');

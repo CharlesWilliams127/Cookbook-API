@@ -147,8 +147,6 @@ var sendPost = function sendPost(e, addRecipe) {
         formData.Appliance.push(addRecipe.querySelector('#Appliance' + _i2).value);
     }
 
-    console.dir(formData);
-
     var xhr = new XMLHttpRequest();
     xhr.open(recipeMethod, recipeAction);
 
@@ -172,7 +170,7 @@ var sendPost = function sendPost(e, addRecipe) {
     return false;
 };
 
-var requestUpdate = function requestUpdate() {
+var requestUpdate = function requestUpdate(e) {
 
     var xhr = new XMLHttpRequest();
 
@@ -188,7 +186,7 @@ var requestUpdate = function requestUpdate() {
     xhr.send();
 
     //cancel browser's default action
-    //e.preventDefault();
+    e.preventDefault();
     //return false to prevent page redirection from a form
     return false;
 };
@@ -254,7 +252,7 @@ var init = function init() {
         return sendPost(e, recipeForm);
     };
     var getRecipes = function getRecipes(e) {
-        return requestUpdate(e, getForm);
+        return requestUpdate(e);
     };
     var addIngredient = function addIngredient(e) {
         return addItem(e, ingredientList, 'Ingredient');
