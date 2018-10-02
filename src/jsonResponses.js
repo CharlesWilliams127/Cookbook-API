@@ -42,41 +42,50 @@ const addRecipe = (request, response, body) => {
 
   let responseCode = 201;
 
-  recipes.forEach(function(r){
-    console.dir(r);
-    if (r.title === body.title) { // already exists, update info    
-      responseCode = 204;
-      r.title = body.title;
-      r.description = body.description; 
-      r.price = body.price;
-      r.calories = body.calories;
-      r.ingredients = body.Ingredient; 
-      r.directions = body.Direction;
-      r.appliances = body.Appliance;
-      updateFlag = true;
-    }
-  });
+  // recipes.forEach((r) => {
+  //   console.dir(r);
+  //   if (r.title === body.title) { // already exists, update info
+  //     responseCode = 204;
+  //     r.title = body.title;
+  //     r.description = body.description;
+  //     r.price = body.price;
+  //     r.calories = body.calories;
+  //     r.ingredients = body.Ingredient;
+  //     r.directions = body.Direction;
+  //     r.appliances = body.Appliance;
+  //     updateFlag = true;
+  //   }
+  // });
 
+  for (let i = 0; i < recipes.length; i++) {
+    responseCode = 204;
+    recipes[i].title = body.title;
+    recipes[i].description = body.description;
+    recipes[i].price = body.price;
+    recipes[i].calories = body.calories;
+    recipes[i].ingredients = body.Ingredient;
+    recipes[i].directions = body.Direction;
+    recipes[i].appliances = body.Appliance;
+    updateFlag = true;
+  }
+
+  // if our value was updated, should return here
   if (updateFlag) {
     return respondJSONMeta(request, response, responseCode);
   }
-  else{
-    recipes.push({
-      title: body.title,
-      description: body.description,
-      price: body.price,
-      calories: body.calories,
-      ingredients: body.Ingredient,
-      directions: body.Direction,
-      appliances: body.Appliance
-    });
 
-    if (responseCode === 201) {
-      responseJSON.message = 'Created Successfully';
-      return respondJSON(request, response, responseCode, responseJSON);
-    }
-  }
-  
+  recipes.push({
+    title: body.title,
+    description: body.description,
+    price: body.price,
+    calories: body.calories,
+    ingredients: body.Ingredient,
+    directions: body.Direction,
+    appliances: body.Appliance,
+  });
+
+  responseJSON.message = 'Created Successfully';
+  return respondJSON(request, response, responseCode, responseJSON);
 };
 
 const notFound = (request, response) => {

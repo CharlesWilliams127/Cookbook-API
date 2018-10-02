@@ -1,6 +1,6 @@
 const http = require('http');
 const url = require('url');
-const query = require('querystring');
+// const query = require('querystring'); TODO: re-add when query params are in
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
@@ -39,7 +39,7 @@ const handlePost = (request, response, parsedUrl) => {
     // on end of upload stream.
     request.on('end', () => {
       const bodyString = Buffer.concat(body).toString();
-      //console.dir(bodyString);
+      // console.dir(bodyString);
 
       const bodyParams = JSON.parse(bodyString);
       console.dir(bodyParams);

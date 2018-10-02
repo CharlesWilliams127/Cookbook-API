@@ -27,14 +27,14 @@ const getBundle = (request, response) => {
 };
 
 const getAddImage = (request, response) => {
-  respond(request, response, addImage, 'image/png', 200)
-}
+  respond(request, response, addImage, 'image/png', 200);
+};
 
 const getMasonry = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'application/javascript' });
   response.write(jsMasonry);
   response.end();
-}
+};
 
 module.exports = {
   getIndex,
