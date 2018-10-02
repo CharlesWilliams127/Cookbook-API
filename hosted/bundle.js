@@ -28,6 +28,8 @@ var counterStruct = {
 };var parseJSON = function parseJSON(xhr, content) {
     //parse response (obj will be empty in a 204 updated)
     try {
+        // clear out whatever was in the dynamic content section before repopulating
+        content.innerHTML = "";
         var obj = JSON.parse(xhr.response);
         console.dir(obj);
         //if recipes in response, add to screen
@@ -195,7 +197,7 @@ var requestUpdate = function requestUpdate(e) {
 var addItem = function addItem(e, list, elemName) {
     var count = counterStruct[elemName]();
     var item = document.createElement('li');
-    item.innerHTML = '<input id="' + elemName + count + '" type="text" name="' + elemName + '" />';
+    item.innerHTML = '<input id="' + elemName + count + '" class="text-input" type="text" name="' + elemName + '" />';
     list.appendChild(item);
 };
 
@@ -213,10 +215,18 @@ var hideAddRecipe = function hideAddRecipe(e) {
     var applianceList = document.querySelector('#applianceList');
     var directionList = document.querySelector('#directionList');
     var ingredientList = document.querySelector('#ingredientList');
+    var titleField = document.querySelector('#titleField');
+    var descField = document.querySelector('#descriptionField');
+    var priceField = document.querySelector('#priceField');
+    var caloriesField = document.querySelector('#caloriesField');
 
     applianceList.innerHTML = "";
     directionList.innerHTML = "";
     ingredientList.innerHTML = "";
+    titleField.innerHTML = "";
+    descField.innerHTML = "";
+    priceField.innerHTML = "";
+    caloriesField.innerHTML = "";
 };
 
 var init = function init() {
@@ -225,9 +235,8 @@ var init = function init() {
     masonry = new Masonry(grid, {
         percentPosition: true,
         itemSelector: '.grid-item',
-        columnWidth: '.grid-sizer',
-        horizonatalOrder: true,
-        gutter: 10
+        columnWidth: '.grid-sizer'
+        //horizonatalOrder: true
     });
 
     //make recipe button

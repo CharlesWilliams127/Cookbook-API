@@ -21,6 +21,8 @@ const counterStruct = {
 const parseJSON = (xhr, content) => {
     //parse response (obj will be empty in a 204 updated)
     try {
+        // clear out whatever was in the dynamic content section before repopulating
+        content.innerHTML = "";
         const obj = JSON.parse(xhr.response);
         console.dir(obj);
         //if recipes in response, add to screen
@@ -176,7 +178,7 @@ const requestUpdate = (e) => {
 const addItem = (e, list, elemName) => {
     const count = counterStruct[elemName]();
     const item = document.createElement('li');
-    item.innerHTML = `<input id="${elemName}${count}" type="text" name="${elemName}" />`;
+    item.innerHTML = `<input id="${elemName}${count}" class="text-input" type="text" name="${elemName}" />`;
     list.appendChild(item);
 };
 
@@ -194,10 +196,18 @@ const hideAddRecipe = (e) => {
     const applianceList = document.querySelector('#applianceList');
     const directionList = document.querySelector('#directionList');
     const ingredientList = document.querySelector('#ingredientList');
+    const titleField = document.querySelector('#titleField');
+    const descField = document.querySelector('#descriptionField');
+    const priceField = document.querySelector('#priceField');
+    const caloriesField = document.querySelector('#caloriesField');
 
     applianceList.innerHTML = "";
     directionList.innerHTML = "";
     ingredientList.innerHTML = "";
+    titleField.innerHTML = "";
+    descField.innerHTML = "";
+    priceField.innerHTML = "";
+    caloriesField.innerHTML = "";
 }
 
 const init = () => {
@@ -207,8 +217,7 @@ const init = () => {
         percentPosition: true,
         itemSelector: '.grid-item',
         columnWidth: '.grid-sizer',
-        horizonatalOrder: true,
-        gutter: 10
+        //horizonatalOrder: true
     });
 
     //make recipe button

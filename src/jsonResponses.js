@@ -58,15 +58,17 @@ const addRecipe = (request, response, body) => {
   // });
 
   for (let i = 0; i < recipes.length; i++) {
-    responseCode = 204;
-    recipes[i].title = body.title;
-    recipes[i].description = body.description;
-    recipes[i].price = body.price;
-    recipes[i].calories = body.calories;
-    recipes[i].ingredients = body.Ingredient;
-    recipes[i].directions = body.Direction;
-    recipes[i].appliances = body.Appliance;
-    updateFlag = true;
+    if (recipes[i].title === body.title) {
+      responseCode = 204;
+      recipes[i].title = body.title;
+      recipes[i].description = body.description;
+      recipes[i].price = body.price;
+      recipes[i].calories = body.calories;
+      recipes[i].ingredients = body.Ingredient;
+      recipes[i].directions = body.Direction;
+      recipes[i].appliances = body.Appliance;
+      updateFlag = true;
+    }
   }
 
   // if our value was updated, should return here

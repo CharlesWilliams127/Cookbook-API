@@ -47,7 +47,7 @@ hr {
   font-size: 16pt;
 }
 
-.top-element input{
+.text-input{
   /*color: #3a3c3d;*/
   background-color: #E8E8E8;
   border-radius: 10px;
@@ -76,6 +76,21 @@ hr {
   filter: invert(50%);
   cursor: pointer;
   color: #808080;
+}
+
+.button {
+  font-size: 20pt;
+  background-color: #fff;
+  border-radius: 10px;
+  border-style: none;
+  margin-bottom: 15px;
+  transition-property: background;
+  transition-duration: 0.25s;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #E8E8E8;
 }
 
 #top h1 {
@@ -132,9 +147,9 @@ hr {
   box-shadow: 3px 3px 20px rgb(145, 145, 145);
   border-color: hsla(0, 0%, 0%, 0.5);
   border-radius:15px;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;
   margin-right: 5px;
-  margin-left: 5px;
+  margin-left: 5px;*/
   transition-property: background, transform;
   transition-duration: 0.25s;
 }
@@ -155,6 +170,7 @@ hr {
 
 .grid-item--selected .grid-item-inner-content{
   display: block;
+  text-align: left;
 }
 
 .grid-item:before {
@@ -163,7 +179,6 @@ hr {
   padding-top: 0.2em;
   text-align: center;
   font-size: 1.4rem;
-  transform: scale(0);
 }
 
 .grid-item:hover {
