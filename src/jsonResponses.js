@@ -15,10 +15,22 @@ const respondJSONMeta = (request, response, status) => {
 };
 
 // return user object as JSON
-const getRecipes = (request, response) => {
-  const responseJSON = {
-    recipes,
-  };
+const getRecipes = (request, response, query) => {
+  // make a local copy to edit/remove recipes based on filters
+  let recipesCopy = recipes;
+
+  console.dir(query);
+
+  // if the user filters on a title
+  if (query.title) {
+    for (let i = 0; i < recipes.length; i++) {
+      if (recipes[i].title != query.title) {
+        // remove recipes the user doesn't want
+        delete recipesCopy[i];
+      }
+    }
+  }
+  const responseJSON = { recipesCopy };
 
   respondJSON(request, response, 200, responseJSON);
 };

@@ -42,7 +42,6 @@ const handlePost = (request, response, parsedUrl) => {
       // console.dir(bodyString);
 
       const bodyParams = JSON.parse(bodyString);
-      console.dir(bodyParams);
 
       // pass to our addUser function
       jsonHandler.addRecipe(request, res, bodyParams);
@@ -55,7 +54,7 @@ const handleHeadGet = (request, response, parsedUrl) => {
   //if (request.method === 'GET')
 
   if (urlStruct[parsedUrl.pathname]) {
-    urlStruct[parsedUrl.pathname](request, response);
+    urlStruct[parsedUrl.pathname](request, response, parsedUrl.query);
   } else {
     urlStruct.notFound(request, response);
   }

@@ -25,9 +25,11 @@ const parseJSON = (xhr, content) => {
         content.innerHTML = "";
         const obj = JSON.parse(xhr.response);
         console.dir(obj);
+
         //if recipes in response, add to screen
         if(obj.recipes) {
             for (let i = 0; i < obj.recipes.length; i++) {
+
                 // create a new grid item for masonry
                 const gridItem = document.createElement('div');
                 gridItem.className = "grid-item"; // TODO: make grid "smart" i.e, find out which size would be best
@@ -216,10 +218,17 @@ const sendPost = (e, addRecipe) => {
 };
 
 const requestUpdate = (e) => {
-
     const xhr = new XMLHttpRequest();
 
-    xhr.open('get', '/getRecipes');
+    let url = '/getRecipes';
+    // apply filters
+    const filter = document.getElementById('filterInput');
+
+    if (filter) {
+        url = `${url}?title=${filter.value}`;
+    }
+
+    xhr.open('get', url);
 
     xhr.setRequestHeader('Accept', 'application/json');
     //if get request or head request
@@ -229,7 +238,7 @@ const requestUpdate = (e) => {
     xhr.send();
 
     //cancel browser's default action
-    e.preventDefault();
+    //e.preventDefault();
     //return false to prevent page redirection from a form
     return false;
 };
@@ -283,6 +292,7 @@ const init = () => {
         percentPosition: true,
         itemSelector: '.grid-item',
         columnWidth: '.grid-sizer',
+        stagger : 30
         //horizonatalOrder: true
     });
 

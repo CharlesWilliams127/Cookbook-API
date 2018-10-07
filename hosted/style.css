@@ -165,7 +165,6 @@ hr {
 
 .grid-item--selected {
   width: 60%;
-  /*height: 480px;*/
   z-index: 2;
 }
 
