@@ -238,7 +238,7 @@ const requestUpdate = (e) => {
     xhr.send();
 
     //cancel browser's default action
-    //e.preventDefault();
+    e.preventDefault();
     //return false to prevent page redirection from a form
     return false;
 };

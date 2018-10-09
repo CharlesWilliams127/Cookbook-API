@@ -1,6 +1,8 @@
 // purely in mem
 const recipes = [];
 
+// a dictionary that maps
+
 // function to respond with a json object
 // takes request, response, status code and object to send
 const respondJSON = (request, response, status, object) => {
@@ -17,20 +19,19 @@ const respondJSONMeta = (request, response, status) => {
 // return user object as JSON
 const getRecipes = (request, response, query) => {
   // make a local copy to edit/remove recipes based on filters
-  let recipesCopy = recipes;
-
-  console.dir(query);
+  let responseJSON = { };
 
   // if the user filters on a title
+  // title is always unique, should only ever be 1 result
   if (query.title) {
     for (let i = 0; i < recipes.length; i++) {
-      if (recipes[i].title != query.title) {
-        // remove recipes the user doesn't want
-        delete recipesCopy[i];
+      if (recipes[i].title === query.title) {
+        responseJSON = { recipes: [recipes[i]] };
       }
     }
+  } else { // user hasn't applied a filter
+    responseJSON = { recipes };
   }
-  const responseJSON = { recipesCopy };
 
   respondJSON(request, response, 200, responseJSON);
 };

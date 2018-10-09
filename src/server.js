@@ -1,6 +1,6 @@
 const http = require('http');
 const url = require('url');
-// const query = require('querystring'); TODO: re-add when query params are in
+const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
@@ -51,10 +51,10 @@ const handlePost = (request, response, parsedUrl) => {
 
 const handleHeadGet = (request, response, parsedUrl) => {
   // route to correct method based on url
-  //if (request.method === 'GET')
+  // if (request.method === 'GET')
 
   if (urlStruct[parsedUrl.pathname]) {
-    urlStruct[parsedUrl.pathname](request, response, parsedUrl.query);
+    urlStruct[parsedUrl.pathname](request, response, query.parse(parsedUrl.query));
   } else {
     urlStruct.notFound(request, response);
   }
