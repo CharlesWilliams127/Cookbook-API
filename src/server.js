@@ -33,17 +33,17 @@ const handlePost = (request, response, parsedUrl) => {
     });
 
     request.on('data', (chunk) => {
-      body.push(chunk);
+      body.push(chunk); 
     });
 
     // on end of upload stream.
     request.on('end', () => {
       const bodyString = Buffer.concat(body).toString();
-      // console.dir(bodyString);
+      console.dir(bodyString);
 
       const bodyParams = JSON.parse(bodyString);
 
-      // pass to our addUser function
+      // pass to our addRecipe function 
       jsonHandler.addRecipe(request, res, bodyParams);
     });
   }

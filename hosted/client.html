@@ -34,12 +34,10 @@
           <h2>Add a Recipe</h2>
         </div>
         <div class="modal-body">
+          <label for="image">Image: </label>
+          <input id="imageField" class="button" type="file" name="image" />
           <form id="recipeForm" action="/addRecipe" method="post">
             <div class = "form-split left">
-              <div class="form-split-element">
-                  <label for="image">Image: </label>
-                  <input id="imageField" class="button" type="file" name="image" />
-              </div>
               <div class="form-split-element">
                 <label for="title">Title: </label>
                 <input id="titleField" class="text-input" type="text" name="title" />

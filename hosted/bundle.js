@@ -143,6 +143,29 @@ var addMessage = function addMessage(messageArea, messageContent, message) {
     messageContent.insertBefore(header, hideButton);
 };
 
+// wrapper function to submit an image to imgur when posting
+// will upload image to imgur if recipe upload was successful
+// before calling default handler function
+var handleImgurResponse = function handleImgurResponse(xhr, image) {
+    if (xhr.status == 201) {
+        // Imgur upload
+        console.dir(image);
+        var fd = new FormData();
+        fd.append("image", image);
+
+        var imgurXhr = new XMLHttpRequest();
+        imgurXhr.open("POST", "https://api.imgur.com/3/image.json");
+        imgurXhr.onload = function () {
+            console.dir("Image sent!");
+            console.dir(JSON.parse(imgurXhr.responseText).data.link);
+        };
+        imgurXhr.setRequestHeader('Authorization', 'Client-ID 879ac2e671a727c');
+        imgurXhr.send(fd);
+    }
+
+    handleResponse(xhr);
+};
+
 //function to handle our response
 var handleResponse = function handleResponse(xhr) {
     // grab all necessary elements
@@ -194,7 +217,7 @@ var sendPost = function sendPost(e, addRecipe) {
     var descField = addRecipe.querySelector('#descriptionField');
     var priceField = addRecipe.querySelector('#priceField');
     var caloriesField = addRecipe.querySelector('#caloriesField');
-    var imageField = addRecipe.querySelector('#imageField');
+    var imageField = document.querySelector('#imageField');
 
     // set up base form data
     var formData = {
@@ -222,22 +245,6 @@ var sendPost = function sendPost(e, addRecipe) {
         formData.Appliance.push(addRecipe.querySelector('#Appliance' + _i2).value);
     }
 
-    // Imgur upload
-    if (imageField.value) {
-        console.dir(imageField.value);
-        var fd = new FormData();
-        fd.append("image", imageField.value);
-
-        var _xhr = new XMLHttpRequest();
-        _xhr.open("POST", "https://api.imgur.com/3/image.json");
-        _xhr.onload = function () {
-            console.dir("Image sent!");
-            console.dir(JSON.parse(_xhr.responseText).data.link);
-        };
-        _xhr.setRequestHeader('Authorization', 'Client-ID 879ac2e671a727c');
-        _xhr.send(fd);
-    }
-
     var xhr = new XMLHttpRequest();
     xhr.open(recipeMethod, recipeAction);
 
@@ -245,10 +252,17 @@ var sendPost = function sendPost(e, addRecipe) {
     //set our requested response type in hopes of a JSON response
     xhr.setRequestHeader('Accept', 'application/json');
 
+    console.dir(imageField.files[0]);
     //set our function to handle the response
-    xhr.onload = function () {
-        return handleResponse(xhr);
-    };
+    if (imageField.files[0]) {
+        xhr.onload = function () {
+            return handleImgurResponse(xhr, imageField.files[0]);
+        };
+    } else {
+        xhr.onload = function () {
+            return handleResponse(xhr);
+        };
+    }
 
     hideAddRecipe();
 
