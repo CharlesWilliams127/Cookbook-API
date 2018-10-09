@@ -58,6 +58,7 @@ const addRecipe = (request, response, body) => {
   for (let i = 0; i < recipes.length; i++) {
     if (recipes[i].title === body.title) {
       responseCode = 204;
+      recipes[i].image = body.image;
       recipes[i].title = body.title;
       recipes[i].description = body.description;
       recipes[i].price = body.price;
@@ -74,7 +75,9 @@ const addRecipe = (request, response, body) => {
     return respondJSONMeta(request, response, responseCode);
   }
 
+  // otherwise continue
   recipes.push({
+    image: body.image,
     title: body.title,
     description: body.description,
     price: body.price,

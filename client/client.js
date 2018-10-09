@@ -136,24 +136,38 @@ const addMessage = (messageArea, messageContent, message) => {
 // wrapper function to submit an image to imgur when posting
 // will upload image to imgur if recipe upload was successful
 // before calling default handler function
-const handleImgurResponse = (xhr, image) => {
-    if (xhr.status == 201) {
+const makeImgurRequest = (image) => {
+    return new Promise((resolve, reject) => {
         // Imgur upload
-        console.dir(image);
         const fd = new FormData();
         fd.append("image", image);
 
-        const imgurXhr = new XMLHttpRequest();
-        imgurXhr.open("POST", "https://api.imgur.com/3/image.json");
-        imgurXhr.onload = () => {
-            console.dir("Image sent!");
-            console.dir(JSON.parse(imgurXhr.responseText).data.link);
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://api.imgur.com/3/image.json");
+        xhr.onload = () => {
+            // this is the happy path, the image upload was successful
+            if (xhr.status >= 200 && xhr.status < 300) {
+                console.dir("Image uploaded!");
+                console.dir(JSON.parse(xhr.responseText).data.link);
+                // resolve our promise, allowing our original POST to go through
+                resolve(xhr.responseText);
+            }
+            else {
+                reject({
+                    status: xhr.status,
+                    message: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = () => {
+            reject({
+                status: xhr.status,
+                message: xhr.statusText
+            });
         }
-        imgurXhr.setRequestHeader('Authorization', 'Client-ID 879ac2e671a727c');
-        imgurXhr.send(fd);
-    }
-
-    handleResponse(xhr);
+        xhr.setRequestHeader('Authorization', `Client-ID ${imgurClientID}`);
+        xhr.send(fd);
+    });
 }
 
 //function to handle our response
@@ -193,7 +207,8 @@ const handleResponse = (xhr) => {
 };
 
 //function to send our post request
-const sendPost = (e, addRecipe) => {
+const sendPost = (e, addRecipe, image) => {
+    // grab all necessary elements for a POST request
     const recipeAction = addRecipe.getAttribute('action');
     const recipeMethod = addRecipe.getAttribute('method');
 
@@ -205,6 +220,7 @@ const sendPost = (e, addRecipe) => {
 
     // set up base form data
     const formData = {
+        image: "", // image will always start as empty, will be populated when we retrieve the image from imgur
         title: titleField.value,
         description: descField.value,
         price: priceField.value,
@@ -236,25 +252,48 @@ const sendPost = (e, addRecipe) => {
     //set our requested response type in hopes of a JSON response
     xhr.setRequestHeader ('Accept', 'application/json');
 
-    console.dir(imageField.files[0]);
     //set our function to handle the response
-    if (imageField.files[0]) {
-        xhr.onload = () => handleImgurResponse(xhr, imageField.files[0]);
+    // if we're uploading an image, send it through our imgur API handler
+    // then process response as normal
+    if (imageField.files[0]) { 
+        makeImgurRequest(imageField.files[0])
+        .then((imageData) => {
+            formData.image = JSON.parse(imageData).data.link;
+
+            xhr.onload = () => handleResponse(xhr);
+
+            // clear the modal and all fields
+            hideAddRecipe();
+    
+            xhr.send(JSON.stringify(formData));
+    
+            //prevent the browser's default action (to send the form on its own)
+            e.preventDefault();
+    
+            //return false to prevent the browser from trying to change page
+            return false;
+        })
+        .catch((error) => {
+            console.dir("Error uploading image: ", error.message);
+            //return false to prevent the browser from trying to change page
+            return false;
+        });
     }
     else {
+    
         xhr.onload = () => handleResponse(xhr);
+
+        // clear the modal and all fields
+        hideAddRecipe();
+
+        xhr.send(JSON.stringify(formData));
+
+        //prevent the browser's default action (to send the form on its own)
+        e.preventDefault();
+
+        //return false to prevent the browser from trying to change page
+        return false;
     }
-
-    hideAddRecipe();
-
-    xhr.send(JSON.stringify(formData));
-
-    //requestUpdate(e);
-
-    //prevent the browser's default action (to send the form on its own)
-    e.preventDefault();
-    //return false to prevent the browser from trying to change page
-    return false;
 };
 
 const requestUpdate = (e) => {
@@ -357,7 +396,7 @@ const init = () => {
     const applianceButton = document.querySelector('#applianceButton');
 
     //create handlers
-    const addRecipe = (e) => sendPost(e, recipeForm);
+    const addRecipe = (e) => sendPost(e, recipeForm, "");
     const getRecipes = (e) => requestUpdate(e);
     const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient');
     const addDirection = (e) => addItem(e, directionList, 'Direction');

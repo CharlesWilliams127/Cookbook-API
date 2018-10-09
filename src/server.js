@@ -14,7 +14,7 @@ const urlStruct = {
   '/masonry.js': htmlHandler.getMasonry,
   '/getRecipes': jsonHandler.getRecipes,
   '/notReal': jsonHandler.notFound,
-  getrecipesMeta: jsonHandler.getRecipesMeta,
+  getrecipesMeta: jsonHandler.getRecipesMeta, 
   index: htmlHandler.getIndex,
   notFound: jsonHandler.notFound,
 };
@@ -29,7 +29,7 @@ const handlePost = (request, response, parsedUrl) => {
     request.on('error', (err) => {
       console.dir(err);
       res.statusCode = 400;
-      res.end();
+      res.end(); 
     });
 
     request.on('data', (chunk) => {
@@ -45,7 +45,7 @@ const handlePost = (request, response, parsedUrl) => {
 
       // pass to our addRecipe function 
       jsonHandler.addRecipe(request, res, bodyParams);
-    });
+    }); 
   }
 };
 

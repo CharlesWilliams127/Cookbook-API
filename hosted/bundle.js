@@ -146,24 +146,37 @@ var addMessage = function addMessage(messageArea, messageContent, message) {
 // wrapper function to submit an image to imgur when posting
 // will upload image to imgur if recipe upload was successful
 // before calling default handler function
-var handleImgurResponse = function handleImgurResponse(xhr, image) {
-    if (xhr.status == 201) {
+var makeImgurRequest = function makeImgurRequest(image) {
+    return new Promise(function (resolve, reject) {
         // Imgur upload
-        console.dir(image);
         var fd = new FormData();
         fd.append("image", image);
 
-        var imgurXhr = new XMLHttpRequest();
-        imgurXhr.open("POST", "https://api.imgur.com/3/image.json");
-        imgurXhr.onload = function () {
-            console.dir("Image sent!");
-            console.dir(JSON.parse(imgurXhr.responseText).data.link);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://api.imgur.com/3/image.json");
+        xhr.onload = function () {
+            // this is the happy path, the image upload was successful
+            if (xhr.status >= 200 && xhr.status < 300) {
+                console.dir("Image uploaded!");
+                console.dir(JSON.parse(xhr.responseText).data.link);
+                // resolve our promise, allowing our original POST to go through
+                resolve(xhr.responseText);
+            } else {
+                reject({
+                    status: xhr.status,
+                    message: xhr.statusText
+                });
+            }
         };
-        imgurXhr.setRequestHeader('Authorization', 'Client-ID 879ac2e671a727c');
-        imgurXhr.send(fd);
-    }
-
-    handleResponse(xhr);
+        xhr.onerror = function () {
+            reject({
+                status: xhr.status,
+                message: xhr.statusText
+            });
+        };
+        xhr.setRequestHeader('Authorization', 'Client-ID ' + imgurClientID);
+        xhr.send(fd);
+    });
 };
 
 //function to handle our response
@@ -209,7 +222,8 @@ var handleResponse = function handleResponse(xhr) {
 };
 
 //function to send our post request
-var sendPost = function sendPost(e, addRecipe) {
+var sendPost = function sendPost(e, addRecipe, image) {
+    // grab all necessary elements for a POST request
     var recipeAction = addRecipe.getAttribute('action');
     var recipeMethod = addRecipe.getAttribute('method');
 
@@ -221,6 +235,7 @@ var sendPost = function sendPost(e, addRecipe) {
 
     // set up base form data
     var formData = {
+        image: "", // image will always start as empty, will be populated when we retrieve the image from imgur
         title: titleField.value,
         description: descField.value,
         price: priceField.value,
@@ -252,28 +267,49 @@ var sendPost = function sendPost(e, addRecipe) {
     //set our requested response type in hopes of a JSON response
     xhr.setRequestHeader('Accept', 'application/json');
 
-    console.dir(imageField.files[0]);
     //set our function to handle the response
+    // if we're uploading an image, send it through our imgur API handler
+    // then process response as normal
     if (imageField.files[0]) {
-        xhr.onload = function () {
-            return handleImgurResponse(xhr, imageField.files[0]);
-        };
+        makeImgurRequest(imageField.files[0]).then(function (imageData) {
+            formData.image = JSON.parse(imageData).data.link;
+
+            xhr.onload = function () {
+                return handleResponse(xhr);
+            };
+
+            // clear the modal and all fields
+            hideAddRecipe();
+
+            xhr.send(JSON.stringify(formData));
+
+            //prevent the browser's default action (to send the form on its own)
+            e.preventDefault();
+
+            //return false to prevent the browser from trying to change page
+            return false;
+        }).catch(function (error) {
+            console.dir("Error uploading image: ", error.message);
+            //return false to prevent the browser from trying to change page
+            return false;
+        });
     } else {
+
         xhr.onload = function () {
             return handleResponse(xhr);
         };
+
+        // clear the modal and all fields
+        hideAddRecipe();
+
+        xhr.send(JSON.stringify(formData));
+
+        //prevent the browser's default action (to send the form on its own)
+        e.preventDefault();
+
+        //return false to prevent the browser from trying to change page
+        return false;
     }
-
-    hideAddRecipe();
-
-    xhr.send(JSON.stringify(formData));
-
-    //requestUpdate(e);
-
-    //prevent the browser's default action (to send the form on its own)
-    e.preventDefault();
-    //return false to prevent the browser from trying to change page
-    return false;
 };
 
 var requestUpdate = function requestUpdate(e) {
@@ -379,7 +415,7 @@ var init = function init() {
 
     //create handlers
     var addRecipe = function addRecipe(e) {
-        return sendPost(e, recipeForm);
+        return sendPost(e, recipeForm, "");
     };
     var getRecipes = function getRecipes(e) {
         return requestUpdate(e);
