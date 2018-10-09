@@ -114,25 +114,27 @@ const parseJSON = (xhr, content) => {
 };
 
 // A helper method to append items to the messageArea
-const addMessage = (messageArea, messageContent) => {
+const addMessage = (messageArea, messageContent, message) => {
     messageArea.style.display = "block";
     const header = document.createElement("h3");
-    const message = document.createTextNode(messageContent);
-    header.appendChild(message);
+    const messageText = document.createTextNode(message);
+    header.appendChild(messageText);
     header.setAttribute('id', "deleteMessage");
     const hideButton = document.getElementById("hideMessageArea")
-    messageArea.insertBefore(header, hideButton);
+    messageContent.insertBefore(header, hideButton);
 };
 
 //function to handle our response
 const handleResponse = (xhr) => {
+    // grab all necessary elements
     const content = document.querySelector('#dynamicContent');
     const messageArea = document.querySelector('#messageArea');
+    const messageContent = document.querySelector('#messageContent');
 
     // remove existing message
     const elem = document.getElementById("deleteMessage");
     if (elem) {
-        messageArea.removeChild(elem);
+        messageContent.removeChild(elem);
     }
 
     //check the status code
@@ -140,16 +142,16 @@ const handleResponse = (xhr) => {
         case 200: //success -- only action should be to display results
         break;
         case 201: //created
-        addMessage(messageArea, "Recipe Successfully Added!");
+        addMessage(messageArea, messageContent, "Recipe Successfully Added!");
         break;
         case 204: //updated (no response back from server)
-        addMessage(messageArea, "Recipe Successfully Updated!");
+        addMessage(messageArea, messageContent, "Recipe Successfully Updated!");
         return;
         case 400: //bad request
-        addMessage(messageArea, "Something Went Wrong Adding a Recipe.");
+        addMessage(messageArea, messageContent, "Something Went Wrong Adding a Recipe.");
         break;
         case 404: //not found
-        addMessage(messageArea, "Content Not Found");
+        addMessage(messageArea, messageContent, "Content Not Found");
         break;
         default: //any other status code
         break;
@@ -204,8 +206,7 @@ const sendPost = (e, addRecipe) => {
     //set our function to handle the response
     xhr.onload = () => handleResponse(xhr);
 
-    const section = document.querySelector('#addRecipe');
-    section.style.display = "none";
+    hideAddRecipe();
 
     xhr.send(JSON.stringify(formData));
 

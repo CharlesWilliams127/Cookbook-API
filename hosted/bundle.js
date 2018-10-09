@@ -124,25 +124,27 @@ var counterStruct = {
 };
 
 // A helper method to append items to the messageArea
-var addMessage = function addMessage(messageArea, messageContent) {
+var addMessage = function addMessage(messageArea, messageContent, message) {
     messageArea.style.display = "block";
     var header = document.createElement("h3");
-    var message = document.createTextNode(messageContent);
-    header.appendChild(message);
+    var messageText = document.createTextNode(message);
+    header.appendChild(messageText);
     header.setAttribute('id', "deleteMessage");
     var hideButton = document.getElementById("hideMessageArea");
-    messageArea.insertBefore(header, hideButton);
+    messageContent.insertBefore(header, hideButton);
 };
 
 //function to handle our response
 var handleResponse = function handleResponse(xhr) {
+    // grab all necessary elements
     var content = document.querySelector('#dynamicContent');
     var messageArea = document.querySelector('#messageArea');
+    var messageContent = document.querySelector('#messageContent');
 
     // remove existing message
     var elem = document.getElementById("deleteMessage");
     if (elem) {
-        messageArea.removeChild(elem);
+        messageContent.removeChild(elem);
     }
 
     //check the status code
@@ -152,19 +154,19 @@ var handleResponse = function handleResponse(xhr) {
             break;
         case 201:
             //created
-            addMessage(messageArea, "Recipe Successfully Added!");
+            addMessage(messageArea, messageContent, "Recipe Successfully Added!");
             break;
         case 204:
             //updated (no response back from server)
-            addMessage(messageArea, "Recipe Successfully Updated!");
+            addMessage(messageArea, messageContent, "Recipe Successfully Updated!");
             return;
         case 400:
             //bad request
-            addMessage(messageArea, "Something Went Wrong Adding a Recipe.");
+            addMessage(messageArea, messageContent, "Something Went Wrong Adding a Recipe.");
             break;
         case 404:
             //not found
-            addMessage(messageArea, "Content Not Found");
+            addMessage(messageArea, messageContent, "Content Not Found");
             break;
         default:
             //any other status code
@@ -221,8 +223,7 @@ var sendPost = function sendPost(e, addRecipe) {
         return handleResponse(xhr);
     };
 
-    var section = document.querySelector('#addRecipe');
-    section.style.display = "none";
+    hideAddRecipe();
 
     xhr.send(JSON.stringify(formData));
 

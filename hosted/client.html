@@ -11,7 +11,7 @@
     <!--Navbar, will give user options to add, sort, etc..-->
     <h1 class="top-element">Cookbook API</h1>
     <div class="top-element">
-      <input id="filterInput" type="text" class="text-input" value="Filter"/>
+      <input id="filterInput" type="text" class="text-input" placeholder="Filter"/>
     </div>
     <div class="top-element displayButton" id="displayAddRecipe">
       <img src="./Add-512.png" alt="Add" name="AddRecipeButton"/>
@@ -20,54 +20,62 @@
   </section>
 
   <section id="content">
-    <section id="messageArea">
-      <!--The section to display messages to the user, created successfully, unsuccessfully, etc..-->
-      <input id="hideMessageArea" class="button" type="button" value="Close"/>
-    </section>
+    <div class="modal-background"  id="messageArea">
+      <section id="messageContent" class="modal-content modal-content-small">
+        <!--The section to display messages to the user, created successfully, unsuccessfully, etc..-->
+        <input id="hideMessageArea" class="button" type="button" value="Close"/>
+      </section>
+    </div>
 
-    <section id="addRecipe">
-      <!--The form to add a recipe-->
-      <h3>Add a Recipe</h3>
-      <form id="recipeForm" action="/addRecipe" method="post">
-        <div class = "form-split left">
-          <div class="form-split-element">
-            <label for="title">Title: </label>
-            <input id="titleField" class="text-input" type="text" name="title" />
-          </div>
-          <div class="form-split-element">
-            <label for="description">Description: </label>
-            <textarea id="descriptionField" class="text-input" type="text" name="description"></textarea>
-          </div>
-          <div class="form-split-element">
-            <label for="price">Price: </label>
-            <input id="priceField" class="text-input"  type="number" name="price" min="0" step="1"/>
-          </div>
-          <div class="form-split-element">
-            <label for="calories">Calories: </label>
-            <input id="caloriesField" class="text-input" type="number" name="calories" min="0" step="1"/>
-          </div>
+    <div class="modal-background"  id="addRecipe">
+      <section class="modal-content modal-content-large">
+        <!--The form to add a recipe-->
+        <div class="modal-header">
+          <h2>Add a Recipe</h2>
         </div>
-        <div class="form-split">
-          <div class="form-split-element">
-            <input id="ingredientButton" class="button" type="button" value="Add Ingredient"/>
-            <ul id="ingredientList">
-            </ul>
-          </div>
-          <div class="form-split-element">
-            <input id="directionButton" class="button" type="button" value="Add Direction"/>
-            <ol id="directionList">
-            </ol>
-          </div>
-          <div class="form-split-element">
-            <input id="applianceButton" class="button" type="button" value="Add Appliance"/>
-            <ul id="applianceList">
-            </ul>
-          </div>
+        <div class="modal-body">
+          <form id="recipeForm" action="/addRecipe" method="post">
+            <div class = "form-split left">
+              <div class="form-split-element">
+                <label for="title">Title: </label>
+                <input id="titleField" class="text-input" type="text" name="title" />
+              </div>
+              <div class="form-split-element">
+                <label for="description">Description: </label>
+                <textarea id="descriptionField" class="text-input" type="text" name="description"></textarea>
+              </div>
+              <div class="form-split-element">
+                <label for="price">Price: </label>
+                <input id="priceField" class="text-input"  type="number" name="price" min="0" step="1"/>
+              </div>
+              <div class="form-split-element">
+                <label for="calories">Calories: </label>
+                <input id="caloriesField" class="text-input" type="number" name="calories" min="0" step="1"/>
+              </div>
+            </div>
+            <div class="form-split">
+              <div class="form-split-element">
+                <input id="ingredientButton" class="button" type="button" value="Add Ingredient"/>
+                <ul id="ingredientList">
+                </ul>
+              </div>
+              <div class="form-split-element">
+                <input id="directionButton" class="button" type="button" value="Add Direction"/>
+                <ol id="directionList">
+                </ol>
+              </div>
+              <div class="form-split-element">
+                <input id="applianceButton" class="button" type="button" value="Add Appliance"/>
+                <ul id="applianceList">
+                </ul>
+              </div>
+            </div>
+            <input type="submit" class="button" value="Add Recipe" />
+          </form>
+          <input id="hideAddRecipe" class="button" type="button" value="Hide"/>
         </div>
-        <input type="submit" class="button" value="Add Recipe" />
-      </form>
-      <input id="hideAddRecipe" class="button" type="button" value="Hide"/>
-    </section>
+      </section>
+    </div>
 
     <section id="get">
       <form id="getRecipes" action="/getRecipes" method="get">
