@@ -1,3 +1,7 @@
+// for use with the imgur API
+const imgurClientID = '879ac2e671a727c';
+const imgurClientSecret = '524c709be991cd1fc64f474056b8802ea09e18b0';
+
 // get reference to masonry.js
 let masonry;
 
@@ -40,8 +44,13 @@ const parseJSON = (xhr, content) => {
                 const description = document.createElement('p');
                 description.textContent = obj.recipes[i].description;
 
+                const coverImage = document.createElement('img');
+                coverImage.src = "https://i.imgur.com/8tcxHWh.jpg";
+                coverImage.alt = "My Cool Pic";
+
                 gridItem.appendChild(title);
                 gridItem.appendChild(description);
+                gridItem.appendChild(coverImage);
                 
                 // container for content that won't be displayed until the grid item is expanded
                 const gridItemInnerContent = document.createElement('div');
@@ -169,6 +178,7 @@ const sendPost = (e, addRecipe) => {
     const descField = addRecipe.querySelector('#descriptionField');
     const priceField = addRecipe.querySelector('#priceField');
     const caloriesField = addRecipe.querySelector('#caloriesField');
+    const imageField = addRecipe.querySelector('#imageField');
 
     // set up base form data
     const formData = {
@@ -179,7 +189,7 @@ const sendPost = (e, addRecipe) => {
         Ingredient: [],
         Direction: [],
         Appliance: []
-    }
+    };
 
     // populate ingredients
     for (let i = 0; i < ingredientCounter; i++) {
@@ -194,6 +204,22 @@ const sendPost = (e, addRecipe) => {
     // populate appliances
     for (let i = 0; i < applianceCounter; i++) {
         formData.Appliance.push(addRecipe.querySelector(`#Appliance${i}`).value);
+    }
+
+    // Imgur upload
+    if(imageField.value) {
+        console.dir(imageField.value);
+        const fd = new FormData();
+        fd.append("image", imageField.value);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://api.imgur.com/3/image.json");
+        xhr.onload = () => {
+            console.dir("Image sent!");
+            console.dir(JSON.parse(xhr.responseText).data.link);
+        }
+        xhr.setRequestHeader('Authorization', 'Client-ID 879ac2e671a727c');
+        xhr.send(fd);
     }
 
     const xhr = new XMLHttpRequest();

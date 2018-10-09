@@ -1,5 +1,9 @@
 'use strict';
 
+// for use with the imgur API
+var imgurClientID = '879ac2e671a727c';
+var imgurClientSecret = '524c709be991cd1fc64f474056b8802ea09e18b0';
+
 // get reference to masonry.js
 var masonry = void 0;
 
@@ -47,8 +51,13 @@ var counterStruct = {
                 var description = document.createElement('p');
                 description.textContent = obj.recipes[i].description;
 
+                var coverImage = document.createElement('img');
+                coverImage.src = "https://i.imgur.com/8tcxHWh.jpg";
+                coverImage.alt = "My Cool Pic";
+
                 gridItem.appendChild(title);
                 gridItem.appendChild(description);
+                gridItem.appendChild(coverImage);
 
                 // container for content that won't be displayed until the grid item is expanded
                 var gridItemInnerContent = document.createElement('div');
@@ -185,6 +194,7 @@ var sendPost = function sendPost(e, addRecipe) {
     var descField = addRecipe.querySelector('#descriptionField');
     var priceField = addRecipe.querySelector('#priceField');
     var caloriesField = addRecipe.querySelector('#caloriesField');
+    var imageField = addRecipe.querySelector('#imageField');
 
     // set up base form data
     var formData = {
@@ -195,9 +205,10 @@ var sendPost = function sendPost(e, addRecipe) {
         Ingredient: [],
         Direction: [],
         Appliance: []
+    };
 
-        // populate ingredients
-    };for (var i = 0; i < ingredientCounter; i++) {
+    // populate ingredients
+    for (var i = 0; i < ingredientCounter; i++) {
         formData.Ingredient.push(addRecipe.querySelector('#Ingredient' + i).value);
     }
 
@@ -209,6 +220,22 @@ var sendPost = function sendPost(e, addRecipe) {
     // populate appliances
     for (var _i2 = 0; _i2 < applianceCounter; _i2++) {
         formData.Appliance.push(addRecipe.querySelector('#Appliance' + _i2).value);
+    }
+
+    // Imgur upload
+    if (imageField.value) {
+        console.dir(imageField.value);
+        var fd = new FormData();
+        fd.append("image", imageField.value);
+
+        var _xhr = new XMLHttpRequest();
+        _xhr.open("POST", "https://api.imgur.com/3/image.json");
+        _xhr.onload = function () {
+            console.dir("Image sent!");
+            console.dir(JSON.parse(_xhr.responseText).data.link);
+        };
+        _xhr.setRequestHeader('Authorization', 'Client-ID 879ac2e671a727c');
+        _xhr.send(fd);
     }
 
     var xhr = new XMLHttpRequest();
