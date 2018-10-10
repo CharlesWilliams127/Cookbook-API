@@ -42,7 +42,11 @@ const parseJSON = (xhr, content) => {
 
                 // create a new grid item for masonry
                 const gridItem = document.createElement('div');
-                gridItem.className = "grid-item"; // TODO: make grid "smart" i.e, find out which size would be best
+                gridItem.classList.add("grid-item"); // TODO: make grid "smart" i.e, find out which size would be best
+
+                // calculate appropriate size for grid
+                gridItem.style.width = obj.recipes[i].imageWidth;
+                gridItem.style.height = obj.recipes[i].imageHeight;
 
                 const title = document.createElement('h2');
                 title.textContent = obj.recipes[i].title;
@@ -53,12 +57,26 @@ const parseJSON = (xhr, content) => {
                 gridItem.appendChild(title);
                 gridItem.appendChild(description);
                 
-
-                if (obj.recipes[i].image) {
+                // if all image elements are present, then load image
+                if (obj.recipes[i].image && obj.recipes[i].imageWidth && obj.recipes[i].imageHeight) {
                     const coverImage = document.createElement('img');
                     coverImage.src = obj.recipes[i].image;
                     coverImage.alt = "My Recipe Pic";
                     gridItem.appendChild(coverImage);
+
+                    // calculate appropriate size for grid
+                    //gridItem.style.width = `${obj.recipes[i].imageWidth}px`;
+                    // gridItem.style.height = `${obj.recipes[i].imageHeight}px`;
+                    const width = obj.recipes[i].imageWidth;
+                    if ( width <= 480 && width > 360) {
+                        gridItem.classList.add('grid-item--width2');
+                    }
+                    else if (width <= 640 && width > 480) {
+                        gridItem.classList.add('grid-item--width2');
+                    }
+                    else if (width > 640){
+                        gridItem.classList.add('grid-item--width3');
+                    }
                 }
                 
                 // container for content that won't be displayed until the grid item is expanded
@@ -116,10 +134,11 @@ const parseJSON = (xhr, content) => {
                 content.appendChild(gridItem);
 
                 // add to masonry layout
-                //masonry.appended(gridItem);
+                masonry.appended(gridItem);
 
                 //add an event listener to expand it
                 gridItem.addEventListener( 'click', function( e ) {
+                    // allow item to change sizes
                     gridItem.classList.toggle('grid-item--selected');
                     // trigger layout
                     masonry.layout();
@@ -237,6 +256,8 @@ const sendPost = (e, addRecipe, image) => {
     // set up base form data
     const formData = {
         image: "", // image will always start as empty, will be populated when we retrieve the image from imgur
+        imageHeight: "",
+        imageWidth: "",
         title: titleField.value,
         description: descField.value,
         price: priceField.value,
@@ -276,11 +297,18 @@ const sendPost = (e, addRecipe, image) => {
     makeImgurRequest(imageField.files[0])
     .then((imageData) => {
         let image = "";
+        let width = "";
+        let height = "";
 
         if (imageData) {
-            image = JSON.parse(imageData).data.link;
+            const data = JSON.parse(imageData).data;
+            image = data.link;
+            width = data.width;
+            height = data.height;
         }
 
+        formData.imageWidth = width;
+        formData.imageHeight = height;
         formData.image = image;
         return formData;
     })
@@ -327,7 +355,9 @@ const requestUpdate = (e) => {
     xhr.send();
 
     //cancel browser's default action
-    e.preventDefault();
+    if (e) {
+        e.preventDefault();
+    }
     //return false to prevent page redirection from a form
     return false;
 };
@@ -363,15 +393,22 @@ const hideAddRecipe = (e) => {
     caloriesField.value = "";
 }
 
+// a method that displays newly added recipes and closes the message area
+const hideMessageArea = (e) => {
+    // automatically display newly added recipes
+    displayHideSection('messageArea', 'none');
+    requestUpdate();
+    
+}
+
 const init = () => {
     // set up masonry content
     const grid = document.querySelector('#dynamicContent');
     masonry = new Masonry(grid, {
-        percentPosition: true,
         itemSelector: '.grid-item',
-        columnWidth: '.grid-sizer',
-        stagger : 30
-        //horizonatalOrder: true
+        columnWidth: 360,
+        horizonatalOrder: true,
+        gutter: 10
     });
 
     //make recipe button
@@ -402,7 +439,7 @@ const init = () => {
     const addAppliance = (e) => addItem(e, applianceList, 'Appliance');
     const displayAddRecipeContent = (e) => displayHideSection('addRecipe', 'block');
     const hideAddRecipeContent = (e) => hideAddRecipe(e);
-    const hideMessageAreaContent = (e) => displayHideSection('messageArea', 'none');
+    const hideMessageAreaContent = (e) => hideMessageArea(e);
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);

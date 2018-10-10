@@ -58,6 +58,8 @@ const addRecipe = (request, response, body) => {
     if (recipes[i].title === body.title) {
       responseCode = 204;
       recipes[i].image = body.image;
+      recipes[i].imageHeight = body.imageHeight;
+      recipes[i].imageWidth = body.imageWidth;
       recipes[i].title = body.title;
       recipes[i].description = body.description;
       recipes[i].price = body.price;
@@ -77,6 +79,8 @@ const addRecipe = (request, response, body) => {
   // otherwise continue
   recipes.push({
     image: body.image,
+    imageHeight: body.imageHeight,
+    imageWidth: body.imageWidth,
     title: body.title,
     description: body.description,
     price: body.price,
