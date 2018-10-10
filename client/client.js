@@ -44,13 +44,16 @@ const parseJSON = (xhr, content) => {
                 const description = document.createElement('p');
                 description.textContent = obj.recipes[i].description;
 
-                const coverImage = document.createElement('img');
-                coverImage.src = obj.recipes[i].image;
-                coverImage.alt = "My Recipe Pic";
-
                 gridItem.appendChild(title);
                 gridItem.appendChild(description);
-                gridItem.appendChild(coverImage);
+                
+
+                if (obj.recipes[i].image) {
+                    const coverImage = document.createElement('img');
+                    coverImage.src = obj.recipes[i].image;
+                    coverImage.alt = "My Recipe Pic";
+                    gridItem.appendChild(coverImage);
+                }
                 
                 // container for content that won't be displayed until the grid item is expanded
                 const gridItemInnerContent = document.createElement('div');
@@ -139,34 +142,39 @@ const addMessage = (messageArea, messageContent, message) => {
 const makeImgurRequest = (image) => {
     return new Promise((resolve, reject) => {
         // Imgur upload
-        const fd = new FormData();
-        fd.append("image", image);
+        if(image){
+            const fd = new FormData();
+            fd.append("image", image);
 
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://api.imgur.com/3/image.json");
-        xhr.onload = () => {
-            // this is the happy path, the image upload was successful
-            if (xhr.status >= 200 && xhr.status < 300) {
-                console.dir("Image uploaded!");
-                console.dir(JSON.parse(xhr.responseText).data.link);
-                // resolve our promise, allowing our original POST to go through
-                resolve(xhr.responseText);
-            }
-            else {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://api.imgur.com/3/image.json");
+            xhr.onload = () => {
+                // this is the happy path, the image upload was successful
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    console.dir("Image uploaded!");
+                    console.dir(JSON.parse(xhr.responseText).data.link);
+                    // resolve our promise, allowing our original POST to go through
+                    resolve(xhr.responseText);
+                }
+                else {
+                    reject({
+                        status: xhr.status,
+                        message: xhr.statusText
+                    });
+                }
+            };
+            xhr.onerror = () => {
                 reject({
                     status: xhr.status,
                     message: xhr.statusText
                 });
             }
-        };
-        xhr.onerror = () => {
-            reject({
-                status: xhr.status,
-                message: xhr.statusText
-            });
+            xhr.setRequestHeader('Authorization', `Client-ID ${imgurClientID}`);
+            xhr.send(fd);
         }
-        xhr.setRequestHeader('Authorization', `Client-ID ${imgurClientID}`);
-        xhr.send(fd);
+        else {
+            resolve("");
+        }
     });
 }
 
@@ -257,26 +265,25 @@ const sendPost = (e, addRecipe, image) => {
     //set our function to handle the response
     // if we're uploading an image, send it through our imgur API handler
     // then process response as normal
-    if (imageField.files[0]) { 
-        makeImgurRequest(imageField.files[0])
-        .then((imageData) => {
-            const image = JSON.parse(imageData).data.link;
+    makeImgurRequest(imageField.files[0])
+    .then((imageData) => {
+        let image = "";
+        
+        if (imageData) {
+            image = JSON.parse(imageData).data.link;
+        }
 
-            formData.image = image;
-            return formData;
-        })
-        .then((tempFormData) => {
-            xhr.send(JSON.stringify(tempFormData));
-        })
-        .catch((error) => {
-            console.dir("Error uploading image: ", error.message);
-            //return false to prevent the browser from trying to change page
-            return false;
-        });
-    }
-    else {
-        xhr.send(JSON.stringify(formData));
-    }
+        formData.image = image;
+        return formData;
+    })
+    .then((tempFormData) => {
+        xhr.send(JSON.stringify(tempFormData));
+    })
+    .catch((error) => {
+        console.dir("Error uploading image: ", error.message);
+        //return false to prevent the browser from trying to change page
+        return false;
+    });
     // clear the modal and all fields
     hideAddRecipe();
 

@@ -51,13 +51,15 @@ var counterStruct = {
                 var description = document.createElement('p');
                 description.textContent = obj.recipes[i].description;
 
-                var coverImage = document.createElement('img');
-                coverImage.src = obj.recipes[i].image;
-                coverImage.alt = "My Recipe Pic";
-
                 gridItem.appendChild(title);
                 gridItem.appendChild(description);
-                gridItem.appendChild(coverImage);
+
+                if (obj.recipes[i].image) {
+                    var coverImage = document.createElement('img');
+                    coverImage.src = obj.recipes[i].image;
+                    coverImage.alt = "My Recipe Pic";
+                    gridItem.appendChild(coverImage);
+                }
 
                 // container for content that won't be displayed until the grid item is expanded
                 var gridItemInnerContent = document.createElement('div');
@@ -149,33 +151,37 @@ var addMessage = function addMessage(messageArea, messageContent, message) {
 var makeImgurRequest = function makeImgurRequest(image) {
     return new Promise(function (resolve, reject) {
         // Imgur upload
-        var fd = new FormData();
-        fd.append("image", image);
+        if (image) {
+            var fd = new FormData();
+            fd.append("image", image);
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://api.imgur.com/3/image.json");
-        xhr.onload = function () {
-            // this is the happy path, the image upload was successful
-            if (xhr.status >= 200 && xhr.status < 300) {
-                console.dir("Image uploaded!");
-                console.dir(JSON.parse(xhr.responseText).data.link);
-                // resolve our promise, allowing our original POST to go through
-                resolve(xhr.responseText);
-            } else {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://api.imgur.com/3/image.json");
+            xhr.onload = function () {
+                // this is the happy path, the image upload was successful
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    console.dir("Image uploaded!");
+                    console.dir(JSON.parse(xhr.responseText).data.link);
+                    // resolve our promise, allowing our original POST to go through
+                    resolve(xhr.responseText);
+                } else {
+                    reject({
+                        status: xhr.status,
+                        message: xhr.statusText
+                    });
+                }
+            };
+            xhr.onerror = function () {
                 reject({
                     status: xhr.status,
                     message: xhr.statusText
                 });
-            }
-        };
-        xhr.onerror = function () {
-            reject({
-                status: xhr.status,
-                message: xhr.statusText
-            });
-        };
-        xhr.setRequestHeader('Authorization', 'Client-ID ' + imgurClientID);
-        xhr.send(fd);
+            };
+            xhr.setRequestHeader('Authorization', 'Client-ID ' + imgurClientID);
+            xhr.send(fd);
+        } else {
+            resolve("");
+        }
     });
 };
 
@@ -274,22 +280,22 @@ var sendPost = function sendPost(e, addRecipe, image) {
     //set our function to handle the response
     // if we're uploading an image, send it through our imgur API handler
     // then process response as normal
-    if (imageField.files[0]) {
-        makeImgurRequest(imageField.files[0]).then(function (imageData) {
-            var image = JSON.parse(imageData).data.link;
+    makeImgurRequest(imageField.files[0]).then(function (imageData) {
+        var image = "";
 
-            formData.image = image;
-            return formData;
-        }).then(function (tempFormData) {
-            xhr.send(JSON.stringify(tempFormData));
-        }).catch(function (error) {
-            console.dir("Error uploading image: ", error.message);
-            //return false to prevent the browser from trying to change page
-            return false;
-        });
-    } else {
-        xhr.send(JSON.stringify(formData));
-    }
+        if (imageData) {
+            image = JSON.parse(imageData).data.link;
+        }
+
+        formData.image = image;
+        return formData;
+    }).then(function (tempFormData) {
+        xhr.send(JSON.stringify(tempFormData));
+    }).catch(function (error) {
+        console.dir("Error uploading image: ", error.message);
+        //return false to prevent the browser from trying to change page
+        return false;
+    });
     // clear the modal and all fields
     hideAddRecipe();
 
