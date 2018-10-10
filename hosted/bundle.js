@@ -52,8 +52,8 @@ var counterStruct = {
                 description.textContent = obj.recipes[i].description;
 
                 var coverImage = document.createElement('img');
-                coverImage.src = "https://i.imgur.com/8tcxHWh.jpg";
-                coverImage.alt = "My Cool Pic";
+                coverImage.src = obj.recipes[i].image;
+                coverImage.alt = "My Recipe Pic";
 
                 gridItem.appendChild(title);
                 gridItem.appendChild(description);
@@ -267,49 +267,37 @@ var sendPost = function sendPost(e, addRecipe, image) {
     //set our requested response type in hopes of a JSON response
     xhr.setRequestHeader('Accept', 'application/json');
 
+    xhr.onload = function () {
+        return handleResponse(xhr);
+    };
+
     //set our function to handle the response
     // if we're uploading an image, send it through our imgur API handler
     // then process response as normal
     if (imageField.files[0]) {
         makeImgurRequest(imageField.files[0]).then(function (imageData) {
-            formData.image = JSON.parse(imageData).data.link;
+            var image = JSON.parse(imageData).data.link;
 
-            xhr.onload = function () {
-                return handleResponse(xhr);
-            };
-
-            // clear the modal and all fields
-            hideAddRecipe();
-
-            xhr.send(JSON.stringify(formData));
-
-            //prevent the browser's default action (to send the form on its own)
-            e.preventDefault();
-
-            //return false to prevent the browser from trying to change page
-            return false;
+            formData.image = image;
+            return formData;
+        }).then(function (tempFormData) {
+            xhr.send(JSON.stringify(tempFormData));
         }).catch(function (error) {
             console.dir("Error uploading image: ", error.message);
             //return false to prevent the browser from trying to change page
             return false;
         });
     } else {
-
-        xhr.onload = function () {
-            return handleResponse(xhr);
-        };
-
-        // clear the modal and all fields
-        hideAddRecipe();
-
         xhr.send(JSON.stringify(formData));
-
-        //prevent the browser's default action (to send the form on its own)
-        e.preventDefault();
-
-        //return false to prevent the browser from trying to change page
-        return false;
     }
+    // clear the modal and all fields
+    hideAddRecipe();
+
+    //prevent the browser's default action (to send the form on its own)
+    e.preventDefault();
+
+    //return false to prevent the browser from trying to change page
+    return false;
 };
 
 var requestUpdate = function requestUpdate(e) {

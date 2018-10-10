@@ -18,7 +18,6 @@ const respondJSONMeta = (request, response, status) => {
 
 // return user object as JSON
 const getRecipes = (request, response, query) => {
-  // make a local copy to edit/remove recipes based on filters
   let responseJSON = { };
 
   // if the user filters on a title
