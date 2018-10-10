@@ -21,6 +21,12 @@ const counterStruct = {
     'Appliance': getApplianceCount,
 }
 
+// helper method for displaying or hiding a small section
+const displayHideSection = (sectionID, displayStyle) => {
+    const section = document.querySelector(`#${sectionID}`);
+    section.style.display = displayStyle;
+}
+
 //function to parse our response
 const parseJSON = (xhr, content) => {
     //parse response (obj will be empty in a 204 updated)
@@ -170,6 +176,8 @@ const makeImgurRequest = (image) => {
                 });
             }
             xhr.setRequestHeader('Authorization', `Client-ID ${imgurClientID}`);
+            // display loading widget
+            displayHideSection('recipeSubmitLoading', 'block');
             xhr.send(fd);
         }
         else {
@@ -268,7 +276,7 @@ const sendPost = (e, addRecipe, image) => {
     makeImgurRequest(imageField.files[0])
     .then((imageData) => {
         let image = "";
-        
+
         if (imageData) {
             image = JSON.parse(imageData).data.link;
         }
@@ -279,13 +287,17 @@ const sendPost = (e, addRecipe, image) => {
     .then((tempFormData) => {
         xhr.send(JSON.stringify(tempFormData));
     })
+    .then (() => {
+        // clear the modal and all fields
+        hideAddRecipe();
+    })
     .catch((error) => {
-        console.dir("Error uploading image: ", error.message);
-        //return false to prevent the browser from trying to change page
-        return false;
+        console.dir(error);
+        const messageArea = document.querySelector('#messageArea');
+        const messageContent = document.querySelector('#messageContent');
+        hideAddRecipe();
+        addMessage(messageArea, messageContent, "Something went wrong uploading your image. Please add your recipe again.");
     });
-    // clear the modal and all fields
-    hideAddRecipe();
 
     //prevent the browser's default action (to send the form on its own)
     e.preventDefault();
@@ -328,16 +340,10 @@ const addItem = (e, list, elemName) => {
     list.appendChild(item);
 };
 
-// displays the recipe creation content
-const displayAddRecipe = (e) => {
-    const section = document.querySelector('#addRecipe');
-    section.style.display = "block";
-}
-
 // responsible for hiding the addRecipe section and clearing it's contents
 const hideAddRecipe = (e) => {
-    const section = document.querySelector('#addRecipe');
-    section.style.display = "none";
+    displayHideSection('addRecipe', 'none');
+    displayHideSection('recipeSubmitLoading', 'none');
 
     // delete existing content
     const applianceList = document.querySelector('#applianceList');
@@ -355,11 +361,6 @@ const hideAddRecipe = (e) => {
     descField.value = "";
     priceField.value = "";
     caloriesField.value = "";
-}
-
-const hideMessageArea = (e) => {
-    const section = document.querySelector('#messageArea');
-    section.style.display = "none";
 }
 
 const init = () => {
@@ -399,9 +400,9 @@ const init = () => {
     const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient');
     const addDirection = (e) => addItem(e, directionList, 'Direction');
     const addAppliance = (e) => addItem(e, applianceList, 'Appliance');
-    const displayAddRecipeContent = (e) => displayAddRecipe(e);
+    const displayAddRecipeContent = (e) => displayHideSection('addRecipe', 'block');
     const hideAddRecipeContent = (e) => hideAddRecipe(e);
-    const hideMessageAreaContent = (e) => hideMessageArea(e);
+    const hideMessageAreaContent = (e) => displayHideSection('messageArea', 'none');
 
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);

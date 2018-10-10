@@ -28,8 +28,14 @@ var counterStruct = {
     'Direction': getDirectionCount,
     'Appliance': getApplianceCount
 
-    //function to parse our response
-};var parseJSON = function parseJSON(xhr, content) {
+    // helper method for displaying or hiding a small section
+};var displayHideSection = function displayHideSection(sectionID, displayStyle) {
+    var section = document.querySelector('#' + sectionID);
+    section.style.display = displayStyle;
+};
+
+//function to parse our response
+var parseJSON = function parseJSON(xhr, content) {
     //parse response (obj will be empty in a 204 updated)
     try {
         // clear out whatever was in the dynamic content section before repopulating
@@ -178,6 +184,8 @@ var makeImgurRequest = function makeImgurRequest(image) {
                 });
             };
             xhr.setRequestHeader('Authorization', 'Client-ID ' + imgurClientID);
+            // display loading widget
+            displayHideSection('recipeSubmitLoading', 'block');
             xhr.send(fd);
         } else {
             resolve("");
@@ -291,13 +299,16 @@ var sendPost = function sendPost(e, addRecipe, image) {
         return formData;
     }).then(function (tempFormData) {
         xhr.send(JSON.stringify(tempFormData));
+    }).then(function () {
+        // clear the modal and all fields
+        hideAddRecipe();
     }).catch(function (error) {
-        console.dir("Error uploading image: ", error.message);
-        //return false to prevent the browser from trying to change page
-        return false;
+        console.dir(error);
+        var messageArea = document.querySelector('#messageArea');
+        var messageContent = document.querySelector('#messageContent');
+        hideAddRecipe();
+        addMessage(messageArea, messageContent, "Something went wrong uploading your image. Please add your recipe again.");
     });
-    // clear the modal and all fields
-    hideAddRecipe();
 
     //prevent the browser's default action (to send the form on its own)
     e.preventDefault();
@@ -342,16 +353,10 @@ var addItem = function addItem(e, list, elemName) {
     list.appendChild(item);
 };
 
-// displays the recipe creation content
-var displayAddRecipe = function displayAddRecipe(e) {
-    var section = document.querySelector('#addRecipe');
-    section.style.display = "block";
-};
-
 // responsible for hiding the addRecipe section and clearing it's contents
 var hideAddRecipe = function hideAddRecipe(e) {
-    var section = document.querySelector('#addRecipe');
-    section.style.display = "none";
+    displayHideSection('addRecipe', 'none');
+    displayHideSection('recipeSubmitLoading', 'none');
 
     // delete existing content
     var applianceList = document.querySelector('#applianceList');
@@ -369,11 +374,6 @@ var hideAddRecipe = function hideAddRecipe(e) {
     descField.value = "";
     priceField.value = "";
     caloriesField.value = "";
-};
-
-var hideMessageArea = function hideMessageArea(e) {
-    var section = document.querySelector('#messageArea');
-    section.style.display = "none";
 };
 
 var init = function init() {
@@ -424,13 +424,13 @@ var init = function init() {
         return addItem(e, applianceList, 'Appliance');
     };
     var displayAddRecipeContent = function displayAddRecipeContent(e) {
-        return displayAddRecipe(e);
+        return displayHideSection('addRecipe', 'block');
     };
     var hideAddRecipeContent = function hideAddRecipeContent(e) {
         return hideAddRecipe(e);
     };
     var hideMessageAreaContent = function hideMessageAreaContent(e) {
-        return hideMessageArea(e);
+        return displayHideSection('messageArea', 'none');
     };
 
     //attach submit events (for clicking submit or hitting enter)
