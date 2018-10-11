@@ -8,7 +8,7 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
 }
 
 hr {
@@ -18,16 +18,18 @@ hr {
 #top {
   width: 100%;
   position: fixed;
-  background-color: #fff;
+  background-image: url("./black_paper.png");
+	background-repeat: repeat;
+	background-attachment: fixed;
   padding: 10px;
   padding-bottom: 5px;
-  box-shadow: 3px 3px 20px #E8E8E8;
+  box-shadow: 3px 3px 20px #000;
   z-index: 11;
   top:0;
 	left: 0;
   margin: 0px;
   text-align: center;
-  border-bottom: 2px solid #E8E8E8;
+  border-bottom: 2px solid #000;
 }
 
 .form-split {
@@ -43,7 +45,7 @@ hr {
 
 .top-element, .top-element-right {
   display: inline;
-  color: #3a3c3d;
+  color: #fff;
   margin: 5px;
 }
 
@@ -72,8 +74,13 @@ hr {
 }
 
 .displayButton {
+  font-family: LindysDiner, Arial, 'Helvetica Neue', Helvetica, sans-serif;
   transition-property: color, filter;
   transition-duration: 0.25s;
+}
+
+.displayButton img {
+  filter: invert(100%);
 }
 
 .displayButton:hover {
@@ -83,8 +90,9 @@ hr {
 }
 
 .button {
+  color: #fff;
   font-size: 20pt;
-  background-color: #fff;
+  background-color: #EEC015;
   border-radius: 10px;
   border-style: none;
   margin-bottom: 15px;
@@ -94,10 +102,20 @@ hr {
 
 .button:hover {
   cursor: pointer;
-  background-color: #E8E8E8;
+  background-color: #F8D246;
+}
+
+.button--close {
+  background-color: #303F42;
+}
+
+.button--close:hover {
+  cursor: pointer;
+  background-color: #55676A;
 }
 
 #top h1 {
+  font-family: LindysDiner, Arial, 'Helvetica Neue', Helvetica, sans-serif;
   font-size: 2em;
 }
 
@@ -114,15 +132,14 @@ hr {
 
 /* MODAL STYLING*/
 .modal-background {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 3; /* Sit on top */
+  display: none; 
+  position: fixed; 
+  z-index: 3; 
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0,0,0,0.4); 
   animation-name: fadeIn;
   animation-duration: 0.4s
 }
@@ -171,10 +188,18 @@ hr {
 }
 
 .modal-header {
+  font-family: LindysDiner, Arial, 'Helvetica Neue', Helvetica, sans-serif;
   text-align: center;
   padding: 2px 16px;
-  background-color: #5cb85c;
+  background-image: url("./black_paper.png");
+	background-repeat: repeat;
+	background-attachment: fixed;
   color: white;
+}
+
+.modal-footer {
+  padding: 2px 8px;
+  text-align: center;
 }
 
 @keyframes animatetop {
@@ -200,6 +225,11 @@ hr {
   text-align: center;
 }
 
+.div-50 {
+  display: inline-block;
+  width:45%;
+}
+
 /* MASONRY STYLING */
 .grid {
   width: 100%;
@@ -215,19 +245,25 @@ hr {
 
 .grid-item {
   float: left;
-  background: #fff;
+  color: #fff;
+  background-image: url("./black_paper.png");
+	background-repeat: repeat;
+	background-attachment: fixed;
   border: 2px solid #E8E8E8;
+  font-family: LindysDiner, Arial, 'Helvetica Neue', Helvetica, sans-serif;
   width: 360px; /* Default size, can be adjusted */
   box-shadow: 3px 3px 20px rgb(145, 145, 145);
   border-color: hsla(0, 0%, 0%, 0.5);
   border-radius:15px;
   margin-bottom: 10px;
   overflow: hidden;
-  transition-property: background;
+  transition-property: filter;
   transition-duration: 0.25s;
 }
 
 .grid-item-inner-content {
+  background: #fff;
+  color: #000;
   display: none;
   overflow: auto;
 }
@@ -255,7 +291,13 @@ hr {
 }
 
 .grid-item:hover {
-  background: #E8E8E8;
+  filter: opacity(.7);
   border-color: white;
   cursor: pointer;
+}
+
+/* FONTS */
+@font-face {
+	font-family: LindysDiner;
+	src: url(./LindysDiner.ttf);
 }

@@ -7,6 +7,8 @@ const jsMasonry = fs.readFileSync(`${__dirname}/../node_modules/masonry-layout/d
 const addImage = fs.readFileSync(`${__dirname}/../hosted/Add-512.png`);
 const backgroundImage = fs.readFileSync(`${__dirname}/../hosted/leaves-pattern.png`);
 const loadingImage = fs.readFileSync(`${__dirname}/../hosted/loading.gif`);
+const blackBackgroundImage = fs.readFileSync(`${__dirname}/../hosted/black_paper.png`)
+const dinerFont = fs.readFileSync(`${__dirname}/../hosted/LindysDiner.ttf`);
 
 const respond = (request, response, content, type, code) => {
   response.writeHead(code, { 'Content-Type': type });
@@ -36,8 +38,17 @@ const getBackgroundImage = (request, response) => {
   respond(request, response, backgroundImage, 'image/png', 200 );
 }
 
+const getBlackBackgroundImage = (request, response) => {
+  respond(request, response, blackBackgroundImage, 'image/png', 200 );
+}
+
 const getLoadingImage = (request, response) => {
   respond(request, response, loadingImage, 'image/gif', 200 );
+}
+
+const getFont = (reqest, response) => {
+  // tffs don't have a MIME type so read them in as binary
+  respond(reqest, response, dinerFont, 'application/octet-stream', 200);
 }
 
 const getMasonry = (request, response) => {
@@ -53,5 +64,7 @@ module.exports = {
   getAddImage,
   getMasonry,
   getBackgroundImage,
-  getLoadingImage
+  getBlackBackgroundImage,
+  getLoadingImage,
+  getFont
 };
