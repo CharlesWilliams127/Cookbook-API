@@ -18,6 +18,7 @@ const urlStruct = {
   '/masonry.js': htmlHandler.getMasonry,
   '/imagesLoaded.js': htmlHandler.getImagesLoaded,
   '/getRecipes': jsonHandler.getRecipes,
+  '/deleteRecipe': jsonHandler.deleteRecipe,
   '/notReal': jsonHandler.notFound,
   getrecipesMeta: jsonHandler.getRecipesMeta, 
   index: htmlHandler.getIndex,
@@ -25,7 +26,7 @@ const urlStruct = {
 };
 
 const handlePost = (request, response, parsedUrl) => {
-  // if post is to /addUser (our only POST url)
+  // if post is to /addRecipe (our only POST url)
   if (parsedUrl.pathname === '/addRecipe') {
     const res = response;
 
@@ -54,10 +55,9 @@ const handlePost = (request, response, parsedUrl) => {
   }
 };
 
-const handleHeadGet = (request, response, parsedUrl) => {
+const handleHeadGetDelete = (request, response, parsedUrl) => {
   // route to correct method based on url
-  // if (request.method === 'GET')
-
+  console.dir(parsedUrl.pathname);
   if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response, query.parse(parsedUrl.query));
   } else {
@@ -71,7 +71,7 @@ const onRequest = (request, response) => {
   if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);
   } else {
-    handleHeadGet(request, response, parsedUrl);
+    handleHeadGetDelete(request, response, parsedUrl);
   }
 };
 

@@ -37,6 +37,28 @@ const getRecipes = (request, response, query) => {
 
 const getRecipesMeta = (request, response) => respondJSONMeta(request, response, 200);
 
+// delete the recipe
+const deleteRecipe = (request, response, query) => {
+  let responseJSON = { };
+  let responseCode = 204;
+
+  if (query.title) {
+    for (let i = 0; i < recipes.length; i++) {
+      if (recipes[i].title.toUpperCase() === query.title.toUpperCase() ) {
+        console.dir(query.title.toUpperCase());
+        recipes.splice(i, 1);
+        console.dir(recipes);
+        responseJSON = { message: 'Item deleted.' };
+      }
+    }
+  } else { // user hasn't supplied a recipe
+    responseJSON = { message: 'There are missing parameters.'};
+    responseCode = 400;
+  }
+
+  respondJSON(request, response, responseCode, responseJSON);
+}
+
 // function to add a user from a POST body
 const addRecipe = (request, response, body) => {
   // default json message
@@ -105,6 +127,7 @@ const notFound = (request, response) => {
 // public exports
 module.exports = {
   getRecipes,
+  deleteRecipe,
   addRecipe,
   notFound,
   getRecipesMeta,

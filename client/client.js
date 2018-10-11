@@ -52,9 +52,6 @@ const parseJSON = (xhr, content) => {
                 const title = document.createElement('h2');
                 title.textContent = obj.recipes[i].title;
 
-                const description = document.createElement('p');
-                description.textContent = obj.recipes[i].description;
-
                 gridItem.appendChild(title);
                 
                 
@@ -79,6 +76,8 @@ const parseJSON = (xhr, content) => {
                 const gridItemInnerContent = document.createElement('div');
                 gridItemInnerContent.className = "grid-item-inner-content";
 
+                const description = document.createElement('p');
+                description.textContent = obj.recipes[i].description;
                 gridItemInnerContent.appendChild(description);
 
                 if(obj.recipes[i].price) {
@@ -139,13 +138,13 @@ const parseJSON = (xhr, content) => {
                 editButton.addEventListener('click', clickEdit);
 
                 const deleteForm = footer.appendChild(document.createElement('form'));
+                deleteForm.classList.add("div-50");
                 const deleteButton = deleteForm.appendChild(document.createElement('input'));
-                deleteButton.type = "submit"
+                deleteButton.type = "submit";
                 deleteButton.classList.add("button");
                 deleteButton.classList.add("button--close");
-                deleteButton.classList.add("div-50");
                 deleteButton.value = "Delete Recipe";
-                const clickDelete = (e) => sendDelete(e, obj.recipes[i]);
+                const clickDelete = (e) => sendDelete(e, obj.recipes[i].title);
                 deleteButton.addEventListener('click', clickDelete);
 
                 // finalize grid item content
@@ -299,8 +298,22 @@ const handleResponse = (xhr) => {
 };
 
 // function to handle delete request
-const sendDelete = (e, recipe) => {
+const sendDelete = (e, title) => {
+    const xhr = new XMLHttpRequest();
+    const url = `/deleteRecipe?title=${title}`;
 
+    xhr.open('DELETE', url);
+
+    //xhr.setRequestHeader('Accept', 'application/json');
+    //if get request or head request
+    xhr.onload = () => handleResponse(xhr, true);
+
+    //send ajax request
+    xhr.send();
+
+    e.preventDefault();
+
+    return false;
 }
 
 //function to send our post request

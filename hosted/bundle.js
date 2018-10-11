@@ -60,9 +60,6 @@ var parseJSON = function parseJSON(xhr, content) {
                     var title = document.createElement('h2');
                     title.textContent = obj.recipes[i].title;
 
-                    var description = document.createElement('p');
-                    description.textContent = obj.recipes[i].description;
-
                     gridItem.appendChild(title);
 
                     // if all image elements are present, then load image
@@ -86,6 +83,8 @@ var parseJSON = function parseJSON(xhr, content) {
                     var gridItemInnerContent = document.createElement('div');
                     gridItemInnerContent.className = "grid-item-inner-content";
 
+                    var description = document.createElement('p');
+                    description.textContent = obj.recipes[i].description;
                     gridItemInnerContent.appendChild(description);
 
                     if (obj.recipes[i].price) {
@@ -148,14 +147,14 @@ var parseJSON = function parseJSON(xhr, content) {
                     editButton.addEventListener('click', clickEdit);
 
                     var deleteForm = footer.appendChild(document.createElement('form'));
+                    deleteForm.classList.add("div-50");
                     var deleteButton = deleteForm.appendChild(document.createElement('input'));
                     deleteButton.type = "submit";
                     deleteButton.classList.add("button");
                     deleteButton.classList.add("button--close");
-                    deleteButton.classList.add("div-50");
                     deleteButton.value = "Delete Recipe";
                     var clickDelete = function clickDelete(e) {
-                        return sendDelete(e, obj.recipes[i]);
+                        return sendDelete(e, obj.recipes[i].title);
                     };
                     deleteButton.addEventListener('click', clickDelete);
 
@@ -318,7 +317,25 @@ var handleResponse = function handleResponse(xhr) {
 };
 
 // function to handle delete request
-var sendDelete = function sendDelete(e, recipe) {};
+var sendDelete = function sendDelete(e, title) {
+    var xhr = new XMLHttpRequest();
+    var url = '/deleteRecipe?title=' + title;
+
+    xhr.open('DELETE', url);
+
+    //xhr.setRequestHeader('Accept', 'application/json');
+    //if get request or head request
+    xhr.onload = function () {
+        return handleResponse(xhr, true);
+    };
+
+    //send ajax request
+    xhr.send();
+
+    e.preventDefault();
+
+    return false;
+};
 
 //function to send our post request
 var sendPost = function sendPost(e, addRecipe, image) {
