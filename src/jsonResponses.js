@@ -24,7 +24,7 @@ const getRecipes = (request, response, query) => {
   // title is always unique, should only ever be 1 result
   if (query.title) {
     for (let i = 0; i < recipes.length; i++) {
-      if (recipes[i].title === query.title) {
+      if (recipes[i].title.toUpperCase() === query.title.toUpperCase() ) {
         responseJSON = { recipes: [recipes[i]] };
       }
     }

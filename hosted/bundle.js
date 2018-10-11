@@ -69,18 +69,17 @@ var parseJSON = function parseJSON(xhr, content) {
                     var coverImage = document.createElement('img');
                     coverImage.src = obj.recipes[i].image;
                     coverImage.alt = "My Recipe Pic";
+                    coverImage.classList.add("cover-image");
                     gridItem.appendChild(coverImage);
 
                     // calculate appropriate size for grid
                     //gridItem.style.width = `${obj.recipes[i].imageWidth}px`;
                     // gridItem.style.height = `${obj.recipes[i].imageHeight}px`;
                     var width = obj.recipes[i].imageWidth;
-                    if (width <= 480 && width > 360) {
+                    if (width >= 512) {
                         gridItem.classList.add('grid-item--width2');
-                    } else if (width <= 640 && width > 480) {
-                        gridItem.classList.add('grid-item--width2');
-                    } else if (width > 640) {
-                        gridItem.classList.add('grid-item--width3');
+                        // cap the width on the image
+                        gridItem.getElementsByClassName('cover-image')[0].style.width = "100%";
                     }
                 }
 
@@ -143,7 +142,7 @@ var parseJSON = function parseJSON(xhr, content) {
 
                 //add an event listener to expand it
                 gridItem.addEventListener('click', function (e) {
-                    // allow item to change sizes
+                    // allow item to change sizes 
                     gridItem.classList.toggle('grid-item--selected');
                     // trigger layout
                     masonry.layout();
@@ -153,7 +152,9 @@ var parseJSON = function parseJSON(xhr, content) {
             for (var i = 0; i < obj.recipes.length; i++) {
                 _loop(i);
             }
-            masonry.layout();
+            imagesLoaded('#grid', { background: true }, function () {
+                masonry.layout();
+            });
         }
     } catch (SyntaxError) {}
 };
@@ -416,10 +417,9 @@ var init = function init() {
     // set up masonry content
     var grid = document.querySelector('#dynamicContent');
     masonry = new Masonry(grid, {
-        itemSelector: '.grid-item',
-        columnWidth: 360,
-        horizonatalOrder: true,
-        gutter: 10
+        columnWidth: 256,
+        gutter: 10,
+        itemSelector: '.grid-item'
     });
 
     //make recipe button

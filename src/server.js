@@ -16,6 +16,7 @@ const urlStruct = {
   '/LindysDiner.ttf': htmlHandler.getFont,
   '/loading.gif' : htmlHandler.getLoadingImage,
   '/masonry.js': htmlHandler.getMasonry,
+  '/imagesLoaded.js': htmlHandler.getImagesLoaded,
   '/getRecipes': jsonHandler.getRecipes,
   '/notReal': jsonHandler.notFound,
   getrecipesMeta: jsonHandler.getRecipesMeta, 

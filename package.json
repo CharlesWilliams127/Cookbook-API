@@ -22,6 +22,7 @@
   "author": "Charles Williams",
   "license": "ISC",
   "dependencies": {
+    "imagesloaded": "^4.1.4",
     "masonry-layout": "^4.2.2"
   }
 }

@@ -4,6 +4,7 @@ const index = fs.readFileSync(`${__dirname}/../hosted/client.html`);
 const css = fs.readFileSync(`${__dirname}/../hosted/style.css`);
 const jsBundle = fs.readFileSync(`${__dirname}/../hosted/bundle.js`);
 const jsMasonry = fs.readFileSync(`${__dirname}/../node_modules/masonry-layout/dist/masonry.pkgd.min.js`);
+const jsImagesLoaded = fs.readFileSync(`${__dirname}/../node_modules/imagesloaded/imagesloaded.pkgd.min.js`)
 const addImage = fs.readFileSync(`${__dirname}/../hosted/Add-512.png`);
 const backgroundImage = fs.readFileSync(`${__dirname}/../hosted/leaves-pattern.png`);
 const loadingImage = fs.readFileSync(`${__dirname}/../hosted/loading.gif`);
@@ -57,12 +58,19 @@ const getMasonry = (request, response) => {
   response.end();
 };
 
+const getImagesLoaded = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'application/javascript' });
+  response.write(jsImagesLoaded);
+  response.end();
+};
+
 module.exports = {
   getIndex,
   getCSS,
   getBundle,
   getAddImage,
   getMasonry,
+  getImagesLoaded,
   getBackgroundImage,
   getBlackBackgroundImage,
   getLoadingImage,

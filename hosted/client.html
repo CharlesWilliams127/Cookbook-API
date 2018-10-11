@@ -4,6 +4,7 @@
   <title>Cookbook API</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <script src="masonry.js"></script>
+  <script src="imagesLoaded.js"></script>
   <script src="bundle.js"></script>
 </head>
 <body>
@@ -11,7 +12,7 @@
     <!--Navbar, will give user options to add, sort, etc..-->
     <h1 class="top-element">Cookbook API</h1>
     <div class="top-element">
-      <input id="filterInput" type="text" class="text-input" placeholder="Filter"/>
+      <input id="filterInput" type="text" class="text-input" placeholder="Search"/>
     </div>
     <div class="top-element displayButton" id="displayAddRecipe">
       <img src="./Add-512.png" alt="Add" name="AddRecipeButton"/>
@@ -92,8 +93,14 @@
       </form>
     </section>
 
-    <div id="dynamicContent" class="grid">
-      <!--Where recipe content will get loaded-->
+    <div class="grid">
+      <!--Used to size the Masonry elements-->
+      <!-- <div class="grid-sizer"></div>
+      <div class="gutter-sizer"></div> -->
+      
+      <div id="dynamicContent">
+        <!--Where recipe content will get loaded-->
+      </div>
     </div>
   </section>
 </body>
