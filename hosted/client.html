@@ -11,9 +11,12 @@
   <section id="top">
     <!--Navbar, will give user options to add, sort, etc..-->
     <h1 class="top-element">Cookbook API</h1>
-    <div class="top-element">
-      <input id="filterInput" type="text" class="text-input" placeholder="Search"/>
-    </div>
+    <form class="top-element" id="getRecipes" action="/getRecipes" method="get">
+      <input id="filterInput" type="text" class="text-input" name="searchBar" placeholder="Search"/>
+      <label for="searchBar" class="button--label">
+        <input type="submit" class="button" value="Search"/>
+      </label>
+    </form>
     <div class="top-element displayButton" id="displayAddRecipe">
       <img src="./Add-512.png" alt="Add" name="AddRecipeButton"/>
       <label for="AddRecipeButton">Add Recipe</label>      
@@ -40,8 +43,10 @@
               <img src="./loading.gif" alt="Loading"/>
             </div>
           </div>
-          <label for="image">Image: </label>
-          <input id="imageField" class="button" type="file" name="image" />
+          <div>
+            <input id="imageField" type="file" name="image" />
+            <label for="imageField" class="button" id="imageLabel">Upload an Image</label>
+          </div>
           <form id="recipeForm" action="/addRecipe" method="post">
             <div class = "form-split left">
               <div class="form-split-element">
@@ -87,11 +92,11 @@
       </section>
     </div>
 
-    <section id="get">
+    <!-- <section id="get">
       <form id="getRecipes" action="/getRecipes" method="get">
         <input type="submit" class="button" value="Refresh Recipe List"/>
       </form>
-    </section>
+    </section> -->
 
     <div class="grid">
       <!--Used to size the Masonry elements-->

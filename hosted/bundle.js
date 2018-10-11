@@ -136,6 +136,20 @@ var parseJSON = function parseJSON(xhr, content) {
 
                     // add edit and delete buttons
                     var footer = gridItemInnerContent.appendChild(document.createElement('div'));
+                    footer.style.textAlign = "center";
+                    var deleteForm = footer.appendChild(document.createElement('form'));
+                    deleteForm.classList.add("div-50");
+                    var deleteButton = deleteForm.appendChild(document.createElement('input'));
+                    deleteButton.type = "submit";
+                    deleteButton.style.width = "100%";
+                    deleteButton.classList.add("button");
+                    deleteButton.classList.add("button--close");
+                    deleteButton.value = "Delete Recipe";
+                    var clickDelete = function clickDelete(e) {
+                        return sendDelete(e, obj.recipes[i].title);
+                    };
+                    deleteButton.addEventListener('click', clickDelete);
+
                     var editButton = footer.appendChild(document.createElement('input'));
                     editButton.type = "button";
                     editButton.classList.add("button");
@@ -145,18 +159,6 @@ var parseJSON = function parseJSON(xhr, content) {
                         return displayEditRecipe(obj.recipes[i]);
                     };
                     editButton.addEventListener('click', clickEdit);
-
-                    var deleteForm = footer.appendChild(document.createElement('form'));
-                    deleteForm.classList.add("div-50");
-                    var deleteButton = deleteForm.appendChild(document.createElement('input'));
-                    deleteButton.type = "submit";
-                    deleteButton.classList.add("button");
-                    deleteButton.classList.add("button--close");
-                    deleteButton.value = "Delete Recipe";
-                    var clickDelete = function clickDelete(e) {
-                        return sendDelete(e, obj.recipes[i].title);
-                    };
-                    deleteButton.addEventListener('click', clickDelete);
 
                     // finalize grid item content
                     gridItemInnerContent.appendChild(footer);
@@ -560,6 +562,20 @@ var init = function init() {
     displayRecipeButton.addEventListener('click', displayAddRecipeContent);
     hideRecipeButton.addEventListener('click', hideAddRecipeContent);
     hideMessageAreaButton.addEventListener('click', hideMessageAreaContent);
+
+    // attach event listener to change text of image label
+    var input = document.querySelector('#imageField');
+    var label = document.querySelector('#imageLabel');
+
+    var labelVal = label.innerHTML;
+
+    input.addEventListener('change', function (e) {
+        if (input.files[0]) {
+            label.innerHTML = input.files[0].name;
+        } else {
+            label.innerHTML = labelVal;
+        }
+    });
 
     //console.dir(msnry);
     // automatically display known recipes

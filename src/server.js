@@ -57,7 +57,6 @@ const handlePost = (request, response, parsedUrl) => {
 
 const handleHeadGetDelete = (request, response, parsedUrl) => {
   // route to correct method based on url
-  console.dir(parsedUrl.pathname);
   if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response, query.parse(parsedUrl.query));
   } else {

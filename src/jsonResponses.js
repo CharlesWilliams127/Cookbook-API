@@ -45,9 +45,7 @@ const deleteRecipe = (request, response, query) => {
   if (query.title) {
     for (let i = 0; i < recipes.length; i++) {
       if (recipes[i].title.toUpperCase() === query.title.toUpperCase() ) {
-        console.dir(query.title.toUpperCase());
         recipes.splice(i, 1);
-        console.dir(recipes);
         responseJSON = { message: 'Item deleted.' };
       }
     }

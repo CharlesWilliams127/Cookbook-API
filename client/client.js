@@ -129,6 +129,18 @@ const parseJSON = (xhr, content) => {
 
                 // add edit and delete buttons
                 const footer = gridItemInnerContent.appendChild(document.createElement('div'));
+                footer.style.textAlign = "center";
+                const deleteForm = footer.appendChild(document.createElement('form'));
+                deleteForm.classList.add("div-50");
+                const deleteButton = deleteForm.appendChild(document.createElement('input'));
+                deleteButton.type = "submit";
+                deleteButton.style.width = "100%";
+                deleteButton.classList.add("button");
+                deleteButton.classList.add("button--close");
+                deleteButton.value = "Delete Recipe";
+                const clickDelete = (e) => sendDelete(e, obj.recipes[i].title);
+                deleteButton.addEventListener('click', clickDelete);
+
                 const editButton = footer.appendChild(document.createElement('input'));
                 editButton.type = "button"
                 editButton.classList.add("button");
@@ -136,16 +148,6 @@ const parseJSON = (xhr, content) => {
                 editButton.value = "Edit Recipe";
                 const clickEdit = (e) => displayEditRecipe(obj.recipes[i]);
                 editButton.addEventListener('click', clickEdit);
-
-                const deleteForm = footer.appendChild(document.createElement('form'));
-                deleteForm.classList.add("div-50");
-                const deleteButton = deleteForm.appendChild(document.createElement('input'));
-                deleteButton.type = "submit";
-                deleteButton.classList.add("button");
-                deleteButton.classList.add("button--close");
-                deleteButton.value = "Delete Recipe";
-                const clickDelete = (e) => sendDelete(e, obj.recipes[i].title);
-                deleteButton.addEventListener('click', clickDelete);
 
                 // finalize grid item content
                 gridItemInnerContent.appendChild(footer);
@@ -524,6 +526,21 @@ const init = () => {
     displayRecipeButton.addEventListener('click', displayAddRecipeContent);
     hideRecipeButton.addEventListener('click', hideAddRecipeContent);
     hideMessageAreaButton.addEventListener('click', hideMessageAreaContent);
+
+    // attach event listener to change text of image label
+    const input = document.querySelector( '#imageField' );
+    const label =document.querySelector( '#imageLabel' );
+
+    let labelVal = label.innerHTML;
+
+    input.addEventListener( 'change', (e) =>{
+        if( input.files[0] ) {
+            label.innerHTML = input.files[0].name;
+        }
+        else {
+            label.innerHTML = labelVal;
+        }
+    });
 
     //console.dir(msnry);
     // automatically display known recipes
