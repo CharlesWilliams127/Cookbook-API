@@ -3,6 +3,7 @@ const imgurClientID = '879ac2e671a727c';
 const imgurClientSecret = '524c709be991cd1fc64f474056b8802ea09e18b0';
 
 // get reference to masonry.js
+// Credit: Masonry Library
 let masonry;
 
 let ingredientCounter = 0;
@@ -55,7 +56,7 @@ const parseJSON = (xhr, content) => {
                 description.textContent = obj.recipes[i].description;
 
                 gridItem.appendChild(title);
-                gridItem.appendChild(description);
+                
                 
                 // if all image elements are present, then load image
                 if (obj.recipes[i].image && obj.recipes[i].imageWidth && obj.recipes[i].imageHeight) {
@@ -66,10 +67,8 @@ const parseJSON = (xhr, content) => {
                     gridItem.appendChild(coverImage);
 
                     // calculate appropriate size for grid
-                    //gridItem.style.width = `${obj.recipes[i].imageWidth}px`;
-                    // gridItem.style.height = `${obj.recipes[i].imageHeight}px`;
                     const width = obj.recipes[i].imageWidth;
-                    if ( width >= 512) {
+                    if ( width >= 256) {
                         gridItem.classList.add('grid-item--width2');
                         // cap the width on the image
                         gridItem.getElementsByClassName('cover-image')[0].style.width = "100%";
@@ -79,6 +78,8 @@ const parseJSON = (xhr, content) => {
                 // container for content that won't be displayed until the grid item is expanded
                 const gridItemInnerContent = document.createElement('div');
                 gridItemInnerContent.className = "grid-item-inner-content";
+
+                gridItemInnerContent.appendChild(description);
 
                 if(obj.recipes[i].price) {
                     const priceDesc = document.createElement('p');
@@ -127,20 +128,42 @@ const parseJSON = (xhr, content) => {
                     gridItemInnerContent.appendChild(list);
                 }
 
+                // add edit and delete buttons
+                const footer = gridItemInnerContent.appendChild(document.createElement('div'));
+                const editButton = footer.appendChild(document.createElement('input'));
+                editButton.type = "button"
+                editButton.classList.add("button");
+                editButton.classList.add("div-50");
+                editButton.value = "Edit Recipe";
+                const clickEdit = (e) => displayEditRecipe(obj.recipes[i]);
+                editButton.addEventListener('click', clickEdit);
+
+                const deleteForm = footer.appendChild(document.createElement('form'));
+                const deleteButton = deleteForm.appendChild(document.createElement('input'));
+                deleteButton.type = "submit"
+                deleteButton.classList.add("button");
+                deleteButton.classList.add("button--close");
+                deleteButton.classList.add("div-50");
+                deleteButton.value = "Delete Recipe";
+                const clickDelete = (e) => sendDelete(e, obj.recipes[i]);
+                deleteButton.addEventListener('click', clickDelete);
+
+                // finalize grid item content
+                gridItemInnerContent.appendChild(footer);
                 gridItem.appendChild(gridItemInnerContent);
                 content.appendChild(gridItem);
 
                 // add to masonry layout
                 masonry.appended(gridItem);
 
-                //add an event listener to expand it
+                //add an event listener to expand grid items
                 gridItem.addEventListener( 'click', function( e ) {
-                    // allow item to change sizes 
                     gridItem.classList.toggle('grid-item--selected');
-                    // trigger layout
                     masonry.layout();
                 });
             }
+            // ensure that we only lay out grid when all images are loaded
+            // Credit: ImagesLoaded Library
             imagesLoaded( '#grid', { background: true }, function() {
                 masonry.layout();
             });
@@ -204,6 +227,41 @@ const makeImgurRequest = (image) => {
     });
 }
 
+const populateList = (elements, list) => {
+    elements.forEach(element => {
+        addItem(null, list, element);
+    });
+}
+
+// a function to handle the user clicking the edit button from
+// within a recipe
+const displayEditRecipe = (recipe) => {
+    displayHideSection('addRecipe', 'block');
+
+    const applianceList = document.querySelector('#applianceList');
+    const directionList = document.querySelector('#directionList');
+    const ingredientList = document.querySelector('#ingredientList');
+    const titleField = document.querySelector('#titleField');
+    const descField = document.querySelector('#descriptionField');
+    const priceField = document.querySelector('#priceField');
+    const caloriesField = document.querySelector('#caloriesField');
+
+    if (recipe.appliances) {
+        populateList(recipe.appliances, applianceList);
+    }
+    if (recipe.directions) {
+        populateList(recipe.directions, directionList);
+    }
+    if (recipe.ingredients) {
+        populateList(recipe.ingredients, ingredientList);
+    }
+
+    titleField.value = recipe.title;
+    descField.value = recipe.description;
+    priceField.value = recipe.price;
+    caloriesField.value = recipe.calories;
+}
+
 //function to handle our response
 const handleResponse = (xhr) => {
     // grab all necessary elements
@@ -239,6 +297,11 @@ const handleResponse = (xhr) => {
     //parse response 
     parseJSON(xhr, content);
 };
+
+// function to handle delete request
+const sendDelete = (e, recipe) => {
+
+}
 
 //function to send our post request
 const sendPost = (e, addRecipe, image) => {

@@ -5,6 +5,7 @@ var imgurClientID = '879ac2e671a727c';
 var imgurClientSecret = '524c709be991cd1fc64f474056b8802ea09e18b0';
 
 // get reference to masonry.js
+// Credit: Masonry Library
 var masonry = void 0;
 
 var ingredientCounter = 0;
@@ -38,124 +39,151 @@ var counterStruct = {
 var parseJSON = function parseJSON(xhr, content) {
     //parse response (obj will be empty in a 204 updated)
     try {
-        // clear out whatever was in the dynamic content section before repopulating
-        content.innerHTML = "";
-        var obj = JSON.parse(xhr.response);
-        console.dir(obj);
+        (function () {
+            // clear out whatever was in the dynamic content section before repopulating
+            content.innerHTML = "";
+            var obj = JSON.parse(xhr.response);
+            console.dir(obj);
 
-        //if recipes in response, add to screen
-        if (obj.recipes) {
-            var _loop = function _loop(i) {
+            //if recipes in response, add to screen
+            if (obj.recipes) {
+                var _loop = function _loop(i) {
 
-                // create a new grid item for masonry
-                var gridItem = document.createElement('div');
-                gridItem.classList.add("grid-item"); // TODO: make grid "smart" i.e, find out which size would be best
-
-                // calculate appropriate size for grid
-                gridItem.style.width = obj.recipes[i].imageWidth;
-                gridItem.style.height = obj.recipes[i].imageHeight;
-
-                var title = document.createElement('h2');
-                title.textContent = obj.recipes[i].title;
-
-                var description = document.createElement('p');
-                description.textContent = obj.recipes[i].description;
-
-                gridItem.appendChild(title);
-                gridItem.appendChild(description);
-
-                // if all image elements are present, then load image
-                if (obj.recipes[i].image && obj.recipes[i].imageWidth && obj.recipes[i].imageHeight) {
-                    var coverImage = document.createElement('img');
-                    coverImage.src = obj.recipes[i].image;
-                    coverImage.alt = "My Recipe Pic";
-                    coverImage.classList.add("cover-image");
-                    gridItem.appendChild(coverImage);
+                    // create a new grid item for masonry
+                    var gridItem = document.createElement('div');
+                    gridItem.classList.add("grid-item"); // TODO: make grid "smart" i.e, find out which size would be best
 
                     // calculate appropriate size for grid
-                    //gridItem.style.width = `${obj.recipes[i].imageWidth}px`;
-                    // gridItem.style.height = `${obj.recipes[i].imageHeight}px`;
-                    var width = obj.recipes[i].imageWidth;
-                    if (width >= 512) {
-                        gridItem.classList.add('grid-item--width2');
-                        // cap the width on the image
-                        gridItem.getElementsByClassName('cover-image')[0].style.width = "100%";
+                    gridItem.style.width = obj.recipes[i].imageWidth;
+                    gridItem.style.height = obj.recipes[i].imageHeight;
+
+                    var title = document.createElement('h2');
+                    title.textContent = obj.recipes[i].title;
+
+                    var description = document.createElement('p');
+                    description.textContent = obj.recipes[i].description;
+
+                    gridItem.appendChild(title);
+
+                    // if all image elements are present, then load image
+                    if (obj.recipes[i].image && obj.recipes[i].imageWidth && obj.recipes[i].imageHeight) {
+                        var coverImage = document.createElement('img');
+                        coverImage.src = obj.recipes[i].image;
+                        coverImage.alt = "My Recipe Pic";
+                        coverImage.classList.add("cover-image");
+                        gridItem.appendChild(coverImage);
+
+                        // calculate appropriate size for grid
+                        var width = obj.recipes[i].imageWidth;
+                        if (width >= 256) {
+                            gridItem.classList.add('grid-item--width2');
+                            // cap the width on the image
+                            gridItem.getElementsByClassName('cover-image')[0].style.width = "100%";
+                        }
                     }
-                }
 
-                // container for content that won't be displayed until the grid item is expanded
-                var gridItemInnerContent = document.createElement('div');
-                gridItemInnerContent.className = "grid-item-inner-content";
+                    // container for content that won't be displayed until the grid item is expanded
+                    var gridItemInnerContent = document.createElement('div');
+                    gridItemInnerContent.className = "grid-item-inner-content";
 
-                if (obj.recipes[i].price) {
-                    var priceDesc = document.createElement('p');
-                    priceDesc.textContent = 'Price: ' + obj.recipes[i].price;
-                    gridItemInnerContent.appendChild(priceDesc);
-                }
-                if (obj.recipes[i].calories) {
-                    var caloriesDesc = document.createElement('p');
-                    caloriesDesc.textContent = 'Calories: ' + obj.recipes[i].calories;
-                    gridItemInnerContent.appendChild(caloriesDesc);
-                }
-                if (obj.recipes[i].ingredients.length > 0) {
-                    var header = document.createElement('h3');
-                    header.textContent = "Ingredients:";
-                    var list = document.createElement('ul');
-                    obj.recipes[i].ingredients.forEach(function (ingredient) {
-                        var node = document.createElement("li");
-                        node.textContent = ingredient;
-                        list.appendChild(node);
+                    gridItemInnerContent.appendChild(description);
+
+                    if (obj.recipes[i].price) {
+                        var priceDesc = document.createElement('p');
+                        priceDesc.textContent = 'Price: ' + obj.recipes[i].price;
+                        gridItemInnerContent.appendChild(priceDesc);
+                    }
+                    if (obj.recipes[i].calories) {
+                        var caloriesDesc = document.createElement('p');
+                        caloriesDesc.textContent = 'Calories: ' + obj.recipes[i].calories;
+                        gridItemInnerContent.appendChild(caloriesDesc);
+                    }
+                    if (obj.recipes[i].ingredients.length > 0) {
+                        var header = document.createElement('h3');
+                        header.textContent = "Ingredients:";
+                        var list = document.createElement('ul');
+                        obj.recipes[i].ingredients.forEach(function (ingredient) {
+                            var node = document.createElement("li");
+                            node.textContent = ingredient;
+                            list.appendChild(node);
+                        });
+                        gridItemInnerContent.appendChild(header);
+                        gridItemInnerContent.appendChild(list);
+                    }
+                    if (obj.recipes[i].directions.length > 0) {
+                        var _header = document.createElement('h3');
+                        _header.textContent = "Directions:";
+                        var _list = document.createElement('ol');
+                        obj.recipes[i].directions.forEach(function (direction) {
+                            var node = document.createElement("li");
+                            node.textContent = direction;
+                            _list.appendChild(node);
+                        });
+                        gridItemInnerContent.appendChild(_header);
+                        gridItemInnerContent.appendChild(_list);
+                    }
+                    if (obj.recipes[i].appliances.length > 0) {
+                        var _header2 = document.createElement('h3');
+                        _header2.textContent = "Appliances Needed:";
+                        var _list2 = document.createElement('ul');
+                        obj.recipes[i].appliances.forEach(function (appliance) {
+                            var node = document.createElement("li");
+                            node.textContent = appliance;
+                            _list2.appendChild(node);
+                        });
+                        gridItemInnerContent.appendChild(_header2);
+                        gridItemInnerContent.appendChild(_list2);
+                    }
+
+                    // add edit and delete buttons
+                    var footer = gridItemInnerContent.appendChild(document.createElement('div'));
+                    var editButton = footer.appendChild(document.createElement('input'));
+                    editButton.type = "button";
+                    editButton.classList.add("button");
+                    editButton.classList.add("div-50");
+                    editButton.value = "Edit Recipe";
+                    var clickEdit = function clickEdit(e) {
+                        return displayEditRecipe(obj.recipes[i]);
+                    };
+                    editButton.addEventListener('click', clickEdit);
+
+                    var deleteForm = footer.appendChild(document.createElement('form'));
+                    var deleteButton = deleteForm.appendChild(document.createElement('input'));
+                    deleteButton.type = "submit";
+                    deleteButton.classList.add("button");
+                    deleteButton.classList.add("button--close");
+                    deleteButton.classList.add("div-50");
+                    deleteButton.value = "Delete Recipe";
+                    var clickDelete = function clickDelete(e) {
+                        return sendDelete(e, obj.recipes[i]);
+                    };
+                    deleteButton.addEventListener('click', clickDelete);
+
+                    // finalize grid item content
+                    gridItemInnerContent.appendChild(footer);
+                    gridItem.appendChild(gridItemInnerContent);
+                    content.appendChild(gridItem);
+
+                    // add to masonry layout
+                    masonry.appended(gridItem);
+
+                    //add an event listener to expand grid items
+                    gridItem.addEventListener('click', function (e) {
+                        gridItem.classList.toggle('grid-item--selected');
+                        masonry.layout();
                     });
-                    gridItemInnerContent.appendChild(header);
-                    gridItemInnerContent.appendChild(list);
-                }
-                if (obj.recipes[i].directions.length > 0) {
-                    var _header = document.createElement('h3');
-                    _header.textContent = "Directions:";
-                    var _list = document.createElement('ol');
-                    obj.recipes[i].directions.forEach(function (direction) {
-                        var node = document.createElement("li");
-                        node.textContent = direction;
-                        _list.appendChild(node);
-                    });
-                    gridItemInnerContent.appendChild(_header);
-                    gridItemInnerContent.appendChild(_list);
-                }
-                if (obj.recipes[i].appliances.length > 0) {
-                    var _header2 = document.createElement('h3');
-                    _header2.textContent = "Appliances Needed:";
-                    var _list2 = document.createElement('ul');
-                    obj.recipes[i].appliances.forEach(function (appliance) {
-                        var node = document.createElement("li");
-                        node.textContent = appliance;
-                        _list2.appendChild(node);
-                    });
-                    gridItemInnerContent.appendChild(_header2);
-                    gridItemInnerContent.appendChild(_list2);
-                }
+                };
 
-                gridItem.appendChild(gridItemInnerContent);
-                content.appendChild(gridItem);
-
-                // add to masonry layout
-                masonry.appended(gridItem);
-
-                //add an event listener to expand it
-                gridItem.addEventListener('click', function (e) {
-                    // allow item to change sizes 
-                    gridItem.classList.toggle('grid-item--selected');
-                    // trigger layout
+                for (var i = 0; i < obj.recipes.length; i++) {
+                    _loop(i);
+                }
+                // ensure that we only lay out grid when all images are loaded
+                // Credit: ImagesLoaded Library
+                imagesLoaded('#grid', { background: true }, function () {
                     masonry.layout();
                 });
-            };
-
-            for (var i = 0; i < obj.recipes.length; i++) {
-                _loop(i);
             }
-            imagesLoaded('#grid', { background: true }, function () {
-                masonry.layout();
-            });
-        }
+        })();
     } catch (SyntaxError) {}
 };
 
@@ -212,6 +240,41 @@ var makeImgurRequest = function makeImgurRequest(image) {
     });
 };
 
+var populateList = function populateList(elements, list) {
+    elements.forEach(function (element) {
+        addItem(null, list, element);
+    });
+};
+
+// a function to handle the user clicking the edit button from
+// within a recipe
+var displayEditRecipe = function displayEditRecipe(recipe) {
+    displayHideSection('addRecipe', 'block');
+
+    var applianceList = document.querySelector('#applianceList');
+    var directionList = document.querySelector('#directionList');
+    var ingredientList = document.querySelector('#ingredientList');
+    var titleField = document.querySelector('#titleField');
+    var descField = document.querySelector('#descriptionField');
+    var priceField = document.querySelector('#priceField');
+    var caloriesField = document.querySelector('#caloriesField');
+
+    if (recipe.appliances) {
+        populateList(recipe.appliances, applianceList);
+    }
+    if (recipe.directions) {
+        populateList(recipe.directions, directionList);
+    }
+    if (recipe.ingredients) {
+        populateList(recipe.ingredients, ingredientList);
+    }
+
+    titleField.value = recipe.title;
+    descField.value = recipe.description;
+    priceField.value = recipe.price;
+    caloriesField.value = recipe.calories;
+};
+
 //function to handle our response
 var handleResponse = function handleResponse(xhr) {
     // grab all necessary elements
@@ -253,6 +316,9 @@ var handleResponse = function handleResponse(xhr) {
     //parse response 
     parseJSON(xhr, content);
 };
+
+// function to handle delete request
+var sendDelete = function sendDelete(e, recipe) {};
 
 //function to send our post request
 var sendPost = function sendPost(e, addRecipe, image) {
