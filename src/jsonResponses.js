@@ -46,7 +46,7 @@ const deleteRecipe = (request, response, query) => {
     for (let i = 0; i < recipes.length; i++) {
       if (recipes[i].title.toUpperCase() === query.title.toUpperCase() ) {
         recipes.splice(i, 1);
-        responseJSON = { message: 'Item deleted.' };
+        responseJSON = { message: 'Deleted Successfully' };
       }
     }
   } else { // user hasn't supplied a recipe
@@ -87,6 +87,7 @@ const addRecipe = (request, response, body) => {
       recipes[i].ingredients = body.Ingredient;
       recipes[i].directions = body.Direction;
       recipes[i].appliances = body.Appliance;
+      respondJSON.message = 'Updated Successfully';
       updateFlag = true;
     }
   }

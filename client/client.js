@@ -11,7 +11,7 @@ let directionCounter = 0;
 let applianceCounter = 0;
 
 // helper functions to increment variables for keeping track of items in lists
-const getIngredientCount = () => { return ingredientCounter++ };
+const getIngredientCount = () => { return ingredientCounter++; };
 const getDirectionCount = () => { return directionCounter++; };
 const getApplianceCount = () => { return applianceCounter++; };
 
@@ -228,9 +228,9 @@ const makeImgurRequest = (image) => {
     });
 }
 
-const populateList = (elements, list) => {
+const populateList = (elements, list, type) => {
     elements.forEach(element => {
-        addItem(null, list, element);
+        addItem(null, list, type, element);
     });
 }
 
@@ -248,19 +248,22 @@ const displayEditRecipe = (recipe) => {
     const caloriesField = document.querySelector('#caloriesField');
 
     if (recipe.appliances) {
-        populateList(recipe.appliances, applianceList);
+        populateList(recipe.appliances, applianceList, 'Appliance');
     }
     if (recipe.directions) {
-        populateList(recipe.directions, directionList);
+        populateList(recipe.directions, directionList, 'Direction');
     }
     if (recipe.ingredients) {
-        populateList(recipe.ingredients, ingredientList);
+        populateList(recipe.ingredients, ingredientList, 'Ingredient');
     }
 
     titleField.value = recipe.title;
     descField.value = recipe.description;
     priceField.value = recipe.price;
     caloriesField.value = recipe.calories;
+
+    // change the header
+    document.querySelector('#addEditHeader').textContent = "Edit a Recipe";
 }
 
 //function to handle our response
@@ -279,6 +282,8 @@ const handleResponse = (xhr) => {
     //check the status code
     switch(xhr.status) {
         case 200: //success -- only action should be to display results
+        //hideMessageArea();
+        displayHideSection(messageArea.id, 'none');
         break;
         case 201: //created
         addMessage(messageArea, messageContent, "Recipe Successfully Added!");
@@ -290,9 +295,10 @@ const handleResponse = (xhr) => {
         addMessage(messageArea, messageContent, "Something Went Wrong Adding a Recipe.");
         break;
         case 404: //not found
-        addMessage(messageArea, messageContent, "Content Not Found");
+        addMessage(messageArea, messageContent, "Content Not Found.");
         break;
         default: //any other status code
+        addMessage(messageArea, messageContent, "Something Went Wrong.");
         break;
     }
     //parse response 
@@ -346,17 +352,23 @@ const sendPost = (e, addRecipe, image) => {
 
     // populate ingredients
     for (let i = 0; i < ingredientCounter; i++) {
-        formData.Ingredient.push(addRecipe.querySelector(`#Ingredient${i}`).value);
+        if (addRecipe.querySelector(`#Ingredient${i}`)) {
+            formData.Ingredient.push(addRecipe.querySelector(`#Ingredient${i}`).value);
+        }
     }
 
     // populate directions
     for (let i = 0; i < directionCounter; i++) {
-        formData.Direction.push(addRecipe.querySelector(`#Direction${i}`).value);
+        if (addRecipe.querySelector(`#Direction${i}`)) {
+            formData.Direction.push(addRecipe.querySelector(`#Direction${i}`).value);
+        }
     }
 
     // populate appliances
     for (let i = 0; i < applianceCounter; i++) {
-        formData.Appliance.push(addRecipe.querySelector(`#Appliance${i}`).value);
+        if (addRecipe.querySelector(`#Appliance${i}`)) {
+            formData.Appliance.push(addRecipe.querySelector(`#Appliance${i}`).value);
+        }
     }
 
     const xhr = new XMLHttpRequest();
@@ -403,6 +415,10 @@ const sendPost = (e, addRecipe, image) => {
         hideAddRecipe();
         addMessage(messageArea, messageContent, "Something went wrong uploading your image. Please add your recipe again.");
     });
+    // reset all counters
+    applianceCounter = 0;
+    ingredientCounter = 0;
+    directionCounter = 0;
 
     //prevent the browser's default action (to send the form on its own)
     e.preventDefault();
@@ -439,12 +455,71 @@ const requestUpdate = (e) => {
     return false;
 };
 
+// function for populating the page with sample data 
+const postSampleData = () => {
+    // Coconut Curry Chicken
+    // set up base form data
+    let formData = {
+        Appliance: [],
+        calories: "850",
+        description: "Coconut Curry Chicken recipe perfect for busy weeknight meal! Simple, flavorful and healthy chicken dinner for anyone who loves a mild curry. Courtesy of https://butterwithasideofbread.com/coconut-curry-chicken/ ",
+        Direction: [
+        "Heat oil in a large skillet over medium heat.",
+        "Add curry, onions, and garlic and mix thoroughly. Cook for 3-4 minutes, stirring occasionally, letting the flavors meld.",
+        "Add chicken, tossing lightly to coat. Season chicken with salt & pepper. Reduce heat to medium, and cook for 5 minutes, until chicken is mostly cooked through.",
+        "Add coconut milk, tomatoes, and sugar and stir to combine. Heat until lightly bubbling, then reduce heat and simmer for 10 minutes.",
+        "Serve chicken over rice. Store leftovers in an airtight container in the fridge."],
+        image: "https://i.imgur.com/R9p4wBW.jpg",
+        imageHeight: 500,
+        imageWidth: 750,
+        Ingredient: [
+        "2 tablespoons vegetable oil",
+        "1 1/2 tablespoons curry powder",
+        "1/2 cup diced sweet onion",
+        "2 cloves minced garlic",
+        "1 14 ounce can coconut milk",
+        "1 14.5 ounce can stewed, diced tomatoes",
+        "3 tablespoons sugar",
+        "salt and pepper to taste",
+        "2-3 boneless, skinless chicken breasts, diced"],
+        price: "20",
+        title: "Curry Chicken"
+    };
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/addRecipe');
+
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    //set our requested response type in hopes of a JSON response
+    xhr.setRequestHeader ('Accept', 'application/json');
+
+    xhr.onload = () => handleResponse(xhr);
+
+    xhr.send(JSON.stringify(formData));
+};
+
 // creates a new field for the user to add to
-const addItem = (e, list, elemName) => {
+const addItem = (e, list, elemName, value) => {
     const count = counterStruct[elemName]();
     const item = document.createElement('li');
-    item.innerHTML = `<input id="${elemName}${count}" class="text-input" type="text" name="${elemName}" />`;
+    const deleteLabel= document.createElement('label');
+    deleteLabel.classList.add('small-button--label');
+    const deleteButton = document.createElement('input');
+    deleteButton.classList.add('button');
+    deleteButton.classList.add('button--close');
+    deleteButton.classList.add('button--small');
+    deleteButton.value = 'X';
+    deleteButton.id = `deleteButton${count}`;
+    deleteLabel.htmlFor = deleteButton.id;
+    // attatch listener to delete button
+    deleteButton.addEventListener('click', (e) => {
+        list.removeChild(item);
+    });
+    item.innerHTML = `<input id="${elemName}${count}" class="text-input" type="text" name="${elemName}" value="${value}"/>`;
+    deleteLabel.appendChild(deleteButton);
+    item.appendChild(deleteLabel);
     list.appendChild(item);
+    
 };
 
 // responsible for hiding the addRecipe section and clearing it's contents
@@ -468,6 +543,9 @@ const hideAddRecipe = (e) => {
     descField.value = "";
     priceField.value = "";
     caloriesField.value = "";
+
+    // change the header
+    document.querySelector('#addEditHeader').textContent = "Add a Recipe";
 }
 
 // a method that displays newly added recipes and closes the message area
@@ -510,9 +588,9 @@ const init = () => {
     //create handlers
     const addRecipe = (e) => sendPost(e, recipeForm, "");
     const getRecipes = (e) => requestUpdate(e);
-    const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient');
-    const addDirection = (e) => addItem(e, directionList, 'Direction');
-    const addAppliance = (e) => addItem(e, applianceList, 'Appliance');
+    const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient', "");
+    const addDirection = (e) => addItem(e, directionList, 'Direction', "");
+    const addAppliance = (e) => addItem(e, applianceList, 'Appliance', "");
     const displayAddRecipeContent = (e) => displayHideSection('addRecipe', 'block');
     const hideAddRecipeContent = (e) => hideAddRecipe(e);
     const hideMessageAreaContent = (e) => hideMessageArea(e);
@@ -530,9 +608,7 @@ const init = () => {
     // attach event listener to change text of image label
     const input = document.querySelector( '#imageField' );
     const label =document.querySelector( '#imageLabel' );
-
     let labelVal = label.innerHTML;
-
     input.addEventListener( 'change', (e) =>{
         if( input.files[0] ) {
             label.innerHTML = input.files[0].name;
@@ -542,7 +618,8 @@ const init = () => {
         }
     });
 
-    //console.dir(msnry);
+    postSampleData();
+
     // automatically display known recipes
     requestUpdate();
     

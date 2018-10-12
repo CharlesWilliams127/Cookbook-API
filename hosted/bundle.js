@@ -241,9 +241,9 @@ var makeImgurRequest = function makeImgurRequest(image) {
     });
 };
 
-var populateList = function populateList(elements, list) {
+var populateList = function populateList(elements, list, type) {
     elements.forEach(function (element) {
-        addItem(null, list, element);
+        addItem(null, list, type, element);
     });
 };
 
@@ -261,19 +261,22 @@ var displayEditRecipe = function displayEditRecipe(recipe) {
     var caloriesField = document.querySelector('#caloriesField');
 
     if (recipe.appliances) {
-        populateList(recipe.appliances, applianceList);
+        populateList(recipe.appliances, applianceList, 'Appliance');
     }
     if (recipe.directions) {
-        populateList(recipe.directions, directionList);
+        populateList(recipe.directions, directionList, 'Direction');
     }
     if (recipe.ingredients) {
-        populateList(recipe.ingredients, ingredientList);
+        populateList(recipe.ingredients, ingredientList, 'Ingredient');
     }
 
     titleField.value = recipe.title;
     descField.value = recipe.description;
     priceField.value = recipe.price;
     caloriesField.value = recipe.calories;
+
+    // change the header
+    document.querySelector('#addEditHeader').textContent = "Edit a Recipe";
 };
 
 //function to handle our response
@@ -293,6 +296,8 @@ var handleResponse = function handleResponse(xhr) {
     switch (xhr.status) {
         case 200:
             //success -- only action should be to display results
+            //hideMessageArea();
+            displayHideSection(messageArea.id, 'none');
             break;
         case 201:
             //created
@@ -308,10 +313,11 @@ var handleResponse = function handleResponse(xhr) {
             break;
         case 404:
             //not found
-            addMessage(messageArea, messageContent, "Content Not Found");
+            addMessage(messageArea, messageContent, "Content Not Found.");
             break;
         default:
             //any other status code
+            addMessage(messageArea, messageContent, "Something Went Wrong.");
             break;
     }
     //parse response 
@@ -367,17 +373,23 @@ var sendPost = function sendPost(e, addRecipe, image) {
 
     // populate ingredients
     for (var i = 0; i < ingredientCounter; i++) {
-        formData.Ingredient.push(addRecipe.querySelector('#Ingredient' + i).value);
+        if (addRecipe.querySelector('#Ingredient' + i)) {
+            formData.Ingredient.push(addRecipe.querySelector('#Ingredient' + i).value);
+        }
     }
 
     // populate directions
     for (var _i = 0; _i < directionCounter; _i++) {
-        formData.Direction.push(addRecipe.querySelector('#Direction' + _i).value);
+        if (addRecipe.querySelector('#Direction' + _i)) {
+            formData.Direction.push(addRecipe.querySelector('#Direction' + _i).value);
+        }
     }
 
     // populate appliances
     for (var _i2 = 0; _i2 < applianceCounter; _i2++) {
-        formData.Appliance.push(addRecipe.querySelector('#Appliance' + _i2).value);
+        if (addRecipe.querySelector('#Appliance' + _i2)) {
+            formData.Appliance.push(addRecipe.querySelector('#Appliance' + _i2).value);
+        }
     }
 
     var xhr = new XMLHttpRequest();
@@ -422,6 +434,10 @@ var sendPost = function sendPost(e, addRecipe, image) {
         hideAddRecipe();
         addMessage(messageArea, messageContent, "Something went wrong uploading your image. Please add your recipe again.");
     });
+    // reset all counters
+    applianceCounter = 0;
+    ingredientCounter = 0;
+    directionCounter = 0;
 
     //prevent the browser's default action (to send the form on its own)
     e.preventDefault();
@@ -460,11 +476,57 @@ var requestUpdate = function requestUpdate(e) {
     return false;
 };
 
+// function for populating the page with sample data 
+var postSampleData = function postSampleData() {
+    // Coconut Curry Chicken
+    // set up base form data
+    var formData = {
+        Appliance: [],
+        calories: "850",
+        description: "Coconut Curry Chicken recipe perfect for busy weeknight meal! Simple, flavorful and healthy chicken dinner for anyone who loves a mild curry. Courtesy of https://butterwithasideofbread.com/coconut-curry-chicken/ ",
+        Direction: ["Heat oil in a large skillet over medium heat.", "Add curry, onions, and garlic and mix thoroughly. Cook for 3-4 minutes, stirring occasionally, letting the flavors meld.", "Add chicken, tossing lightly to coat. Season chicken with salt & pepper. Reduce heat to medium, and cook for 5 minutes, until chicken is mostly cooked through.", "Add coconut milk, tomatoes, and sugar and stir to combine. Heat until lightly bubbling, then reduce heat and simmer for 10 minutes.", "Serve chicken over rice. Store leftovers in an airtight container in the fridge."],
+        image: "https://i.imgur.com/R9p4wBW.jpg",
+        imageHeight: 500,
+        imageWidth: 750,
+        Ingredient: ["2 tablespoons vegetable oil", "1 1/2 tablespoons curry powder", "1/2 cup diced sweet onion", "2 cloves minced garlic", "1 14 ounce can coconut milk", "1 14.5 ounce can stewed, diced tomatoes", "3 tablespoons sugar", "salt and pepper to taste", "2-3 boneless, skinless chicken breasts, diced"],
+        price: "20",
+        title: "Curry Chicken"
+    };
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/addRecipe');
+
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    //set our requested response type in hopes of a JSON response
+    xhr.setRequestHeader('Accept', 'application/json');
+
+    xhr.onload = function () {
+        return handleResponse(xhr);
+    };
+
+    xhr.send(JSON.stringify(formData));
+};
+
 // creates a new field for the user to add to
-var addItem = function addItem(e, list, elemName) {
+var addItem = function addItem(e, list, elemName, value) {
     var count = counterStruct[elemName]();
     var item = document.createElement('li');
-    item.innerHTML = '<input id="' + elemName + count + '" class="text-input" type="text" name="' + elemName + '" />';
+    var deleteLabel = document.createElement('label');
+    deleteLabel.classList.add('small-button--label');
+    var deleteButton = document.createElement('input');
+    deleteButton.classList.add('button');
+    deleteButton.classList.add('button--close');
+    deleteButton.classList.add('button--small');
+    deleteButton.value = 'X';
+    deleteButton.id = 'deleteButton' + count;
+    deleteLabel.htmlFor = deleteButton.id;
+    // attatch listener to delete button
+    deleteButton.addEventListener('click', function (e) {
+        list.removeChild(item);
+    });
+    item.innerHTML = '<input id="' + elemName + count + '" class="text-input" type="text" name="' + elemName + '" value="' + value + '"/>';
+    deleteLabel.appendChild(deleteButton);
+    item.appendChild(deleteLabel);
     list.appendChild(item);
 };
 
@@ -489,6 +551,9 @@ var hideAddRecipe = function hideAddRecipe(e) {
     descField.value = "";
     priceField.value = "";
     caloriesField.value = "";
+
+    // change the header
+    document.querySelector('#addEditHeader').textContent = "Add a Recipe";
 };
 
 // a method that displays newly added recipes and closes the message area
@@ -535,13 +600,13 @@ var init = function init() {
         return requestUpdate(e);
     };
     var addIngredient = function addIngredient(e) {
-        return addItem(e, ingredientList, 'Ingredient');
+        return addItem(e, ingredientList, 'Ingredient', "");
     };
     var addDirection = function addDirection(e) {
-        return addItem(e, directionList, 'Direction');
+        return addItem(e, directionList, 'Direction', "");
     };
     var addAppliance = function addAppliance(e) {
-        return addItem(e, applianceList, 'Appliance');
+        return addItem(e, applianceList, 'Appliance', "");
     };
     var displayAddRecipeContent = function displayAddRecipeContent(e) {
         return displayHideSection('addRecipe', 'block');
@@ -566,9 +631,7 @@ var init = function init() {
     // attach event listener to change text of image label
     var input = document.querySelector('#imageField');
     var label = document.querySelector('#imageLabel');
-
     var labelVal = label.innerHTML;
-
     input.addEventListener('change', function (e) {
         if (input.files[0]) {
             label.innerHTML = input.files[0].name;
@@ -577,7 +640,8 @@ var init = function init() {
         }
     });
 
-    //console.dir(msnry);
+    postSampleData();
+
     // automatically display known recipes
     requestUpdate();
 };
