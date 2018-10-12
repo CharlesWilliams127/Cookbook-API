@@ -24,7 +24,7 @@ const getRecipes = (request, response, query) => {
   // title is always unique, should only ever be 1 result
   if (query.title) {
     for (let i = 0; i < recipes.length; i++) {
-      if (recipes[i].title.toUpperCase() === query.title.toUpperCase() ) {
+      if (recipes[i].title.toUpperCase() === query.title.toUpperCase()) {
         responseJSON = { recipes: [recipes[i]] };
       }
     }
@@ -44,18 +44,18 @@ const deleteRecipe = (request, response, query) => {
 
   if (query.title) {
     for (let i = 0; i < recipes.length; i++) {
-      if (recipes[i].title.toUpperCase() === query.title.toUpperCase() ) {
+      if (recipes[i].title.toUpperCase() === query.title.toUpperCase()) {
         recipes.splice(i, 1);
         responseJSON = { message: 'Deleted Successfully' };
       }
     }
   } else { // user hasn't supplied a recipe
-    responseJSON = { message: 'There are missing parameters.'};
+    responseJSON = { message: 'There are missing parameters.' };
     responseCode = 400;
   }
 
   respondJSON(request, response, responseCode, responseJSON);
-}
+};
 
 // function to add a user from a POST body
 const addRecipe = (request, response, body) => {

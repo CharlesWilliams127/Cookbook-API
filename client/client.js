@@ -427,18 +427,20 @@ const sendPost = (e, addRecipe, image) => {
     return false;
 };
 
-const requestUpdate = (e) => {
+const requestUpdate = (e, method) => {
     const xhr = new XMLHttpRequest();
 
     let url = '/getRecipes';
     // apply filters
-    const filter = document.getElementById('filterInput');
+    if (method == 'get') {
+        const filter = document.getElementById('filterInput');
 
-    if (filter) {
-        url = `${url}?title=${filter.value}`;
+        if (filter) {
+            url = `${url}?title=${filter.value}`;
+        }
     }
 
-    xhr.open('get', url);
+    xhr.open(method, url);
 
     xhr.setRequestHeader('Accept', 'application/json');
     //if get request or head request
@@ -459,7 +461,7 @@ const requestUpdate = (e) => {
 const postSampleData = () => {
     // Coconut Curry Chicken
     // set up base form data
-    let formData = {
+    const formData = {
         Appliance: [],
         calories: "850",
         description: "Coconut Curry Chicken recipe perfect for busy weeknight meal! Simple, flavorful and healthy chicken dinner for anyone who loves a mild curry. Courtesy of https://butterwithasideofbread.com/coconut-curry-chicken/ ",
@@ -486,7 +488,7 @@ const postSampleData = () => {
         title: "Curry Chicken"
     };
 
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open('POST', '/addRecipe');
 
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -552,7 +554,7 @@ const hideAddRecipe = (e) => {
 const hideMessageArea = (e) => {
     // automatically display newly added recipes
     displayHideSection('messageArea', 'none');
-    requestUpdate();
+    requestUpdate(null, 'get');
     
 }
 
@@ -575,6 +577,7 @@ const init = () => {
     //grab forms
     const recipeForm = document.querySelector('#recipeForm');
     const getForm = document.querySelector('#getRecipes');
+    const headForm = document.querySelector('#headRequest');
 
     const ingredientList = document.querySelector('#ingredientList');
     const ingredientButton = document.querySelector('#ingredientButton');
@@ -587,7 +590,8 @@ const init = () => {
 
     //create handlers
     const addRecipe = (e) => sendPost(e, recipeForm, "");
-    const getRecipes = (e) => requestUpdate(e);
+    const getRecipes = (e) => requestUpdate(e, 'get');
+    const getHead = (e) => requestUpdate(e, 'head');
     const addIngredient = (e) => addItem(e, ingredientList, 'Ingredient', "");
     const addDirection = (e) => addItem(e, directionList, 'Direction', "");
     const addAppliance = (e) => addItem(e, applianceList, 'Appliance', "");
@@ -598,6 +602,7 @@ const init = () => {
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
     getForm.addEventListener('submit', getRecipes);
+    headForm.addEventListener('submit', getHead);
     ingredientButton.addEventListener('click', addIngredient);
     directionButton.addEventListener('click', addDirection);
     applianceButton.addEventListener('click', addAppliance);
@@ -618,10 +623,11 @@ const init = () => {
         }
     });
 
+    // adds a sample recipe to the page
     postSampleData();
 
     // automatically display known recipes
-    requestUpdate();
+    requestUpdate(null, 'get');
     
 };
 

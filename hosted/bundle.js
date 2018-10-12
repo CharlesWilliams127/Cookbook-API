@@ -446,18 +446,20 @@ var sendPost = function sendPost(e, addRecipe, image) {
     return false;
 };
 
-var requestUpdate = function requestUpdate(e) {
+var requestUpdate = function requestUpdate(e, method) {
     var xhr = new XMLHttpRequest();
 
     var url = '/getRecipes';
     // apply filters
-    var filter = document.getElementById('filterInput');
+    if (method == 'get') {
+        var filter = document.getElementById('filterInput');
 
-    if (filter) {
-        url = url + '?title=' + filter.value;
+        if (filter) {
+            url = url + '?title=' + filter.value;
+        }
     }
 
-    xhr.open('get', url);
+    xhr.open(method, url);
 
     xhr.setRequestHeader('Accept', 'application/json');
     //if get request or head request
@@ -560,7 +562,7 @@ var hideAddRecipe = function hideAddRecipe(e) {
 var hideMessageArea = function hideMessageArea(e) {
     // automatically display newly added recipes
     displayHideSection('messageArea', 'none');
-    requestUpdate();
+    requestUpdate(null, 'get');
 };
 
 var init = function init() {
@@ -582,6 +584,7 @@ var init = function init() {
     //grab forms
     var recipeForm = document.querySelector('#recipeForm');
     var getForm = document.querySelector('#getRecipes');
+    var headForm = document.querySelector('#headRequest');
 
     var ingredientList = document.querySelector('#ingredientList');
     var ingredientButton = document.querySelector('#ingredientButton');
@@ -597,7 +600,10 @@ var init = function init() {
         return sendPost(e, recipeForm, "");
     };
     var getRecipes = function getRecipes(e) {
-        return requestUpdate(e);
+        return requestUpdate(e, 'get');
+    };
+    var getHead = function getHead(e) {
+        return requestUpdate(e, 'head');
     };
     var addIngredient = function addIngredient(e) {
         return addItem(e, ingredientList, 'Ingredient', "");
@@ -621,6 +627,7 @@ var init = function init() {
     //attach submit events (for clicking submit or hitting enter)
     recipeForm.addEventListener('submit', addRecipe);
     getForm.addEventListener('submit', getRecipes);
+    headForm.addEventListener('submit', getHead);
     ingredientButton.addEventListener('click', addIngredient);
     directionButton.addEventListener('click', addDirection);
     applianceButton.addEventListener('click', addAppliance);
@@ -640,10 +647,11 @@ var init = function init() {
         }
     });
 
+    // adds a sample recipe to the page
     postSampleData();
 
     // automatically display known recipes
-    requestUpdate();
+    requestUpdate(null, 'get');
 };
 
 window.onload = init;

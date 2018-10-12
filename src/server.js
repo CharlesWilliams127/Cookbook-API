@@ -14,13 +14,13 @@ const urlStruct = {
   '/leaves-pattern.png': htmlHandler.getBackgroundImage,
   '/black_paper.png': htmlHandler.getBlackBackgroundImage,
   '/LindysDiner.ttf': htmlHandler.getFont,
-  '/loading.gif' : htmlHandler.getLoadingImage,
+  '/loading.gif': htmlHandler.getLoadingImage,
   '/masonry.js': htmlHandler.getMasonry,
   '/imagesLoaded.js': htmlHandler.getImagesLoaded,
   '/getRecipes': jsonHandler.getRecipes,
   '/deleteRecipe': jsonHandler.deleteRecipe,
   '/notReal': jsonHandler.notFound,
-  getrecipesMeta: jsonHandler.getRecipesMeta, 
+  getrecipesMeta: jsonHandler.getRecipesMeta,
   index: htmlHandler.getIndex,
   notFound: jsonHandler.notFound,
 };
@@ -35,11 +35,11 @@ const handlePost = (request, response, parsedUrl) => {
     request.on('error', (err) => {
       console.dir(err);
       res.statusCode = 400;
-      res.end(); 
+      res.end();
     });
 
     request.on('data', (chunk) => {
-      body.push(chunk); 
+      body.push(chunk);
     });
 
     // on end of upload stream.
@@ -49,15 +49,17 @@ const handlePost = (request, response, parsedUrl) => {
 
       const bodyParams = JSON.parse(bodyString);
 
-      // pass to our addRecipe function 
+      // pass to our addRecipe function
       jsonHandler.addRecipe(request, res, bodyParams);
-    }); 
+    });
   }
 };
 
 const handleHeadGetDelete = (request, response, parsedUrl) => {
   // route to correct method based on url
-  if (urlStruct[parsedUrl.pathname]) {
+  if (parsedUrl.pathname === '/getRecipes' && request.method === 'HEAD') {
+    jsonHandler.getRecipesMeta(request, response);
+  } else if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response, query.parse(parsedUrl.query));
   } else {
     urlStruct.notFound(request, response);

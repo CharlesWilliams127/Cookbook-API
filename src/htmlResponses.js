@@ -15,7 +15,7 @@ const backgroundImage = fs.readFileSync(`${__dirname}/../hosted/leaves-pattern.p
 const loadingImage = fs.readFileSync(`${__dirname}/../hosted/loading.gif`);
 // Black Paper - Atle Mo
 // Source - https://www.toptal.com/designers/subtlepatterns/?s=black+paper
-const blackBackgroundImage = fs.readFileSync(`${__dirname}/../hosted/black_paper.png`)
+const blackBackgroundImage = fs.readFileSync(`${__dirname}/../hosted/black_paper.png`);
 // Lindy's Diner - Jake Luedecke
 // Source - https://www.dafont.com/lindysdiner.font
 const dinerFont = fs.readFileSync(`${__dirname}/../hosted/LindysDiner.ttf`);
@@ -45,21 +45,21 @@ const getAddImage = (request, response) => {
 };
 
 const getBackgroundImage = (request, response) => {
-  respond(request, response, backgroundImage, 'image/png', 200 );
-}
+  respond(request, response, backgroundImage, 'image/png', 200);
+};
 
 const getBlackBackgroundImage = (request, response) => {
-  respond(request, response, blackBackgroundImage, 'image/png', 200 );
-}
+  respond(request, response, blackBackgroundImage, 'image/png', 200);
+};
 
 const getLoadingImage = (request, response) => {
-  respond(request, response, loadingImage, 'image/gif', 200 );
-}
+  respond(request, response, loadingImage, 'image/gif', 200);
+};
 
 const getFont = (reqest, response) => {
   // tffs don't have a MIME type so read them in as binary
   respond(reqest, response, dinerFont, 'application/octet-stream', 200);
-}
+};
 
 const getMasonry = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'application/javascript' });
@@ -83,5 +83,5 @@ module.exports = {
   getBackgroundImage,
   getBlackBackgroundImage,
   getLoadingImage,
-  getFont
+  getFont,
 };
